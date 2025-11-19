@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.7'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.java'
+version = '0.0.1-SNAPSHOT'
+description = 'ploud'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.flywaydb:flyway-mysql'//db 스키마 버전 관리 도구
+
+    // MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // MinIO Java client
+// https://mvnrepository.com/artifact/io.minio/minio
+    implementation 'io.minio:minio:8.6.0'
+    //취약점 5.3점 중간 -> 무시
+
+    // Hibernate Core (UUID 등)
+    implementation 'org.hibernate.orm:hibernate-core'
+
+    // Lombok (optional)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Flyway
+    implementation 'org.flywaydb:flyway-core'
+
+    // Devtools (optional)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    //DOTENV
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
