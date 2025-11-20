@@ -62,7 +62,9 @@ public class MinioService {
     private String makeStorageName(String ownerId, String group, MultipartFile multipartFile) {
         StringJoiner stringJoiner = new StringJoiner("/", "/", "");
         stringJoiner.add(ownerId);
-        stringJoiner.add(group);
+        if (group != null) {
+            stringJoiner.add(group);
+        }
         stringJoiner.add(multipartFile.getOriginalFilename());
 
         return stringJoiner.toString();
