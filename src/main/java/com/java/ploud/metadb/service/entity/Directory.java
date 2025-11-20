@@ -13,8 +13,8 @@ public class Directory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long folderSeq;
-    private String folderName;
+    private long dirSeq;
+    private String dirName;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Directory parent;
