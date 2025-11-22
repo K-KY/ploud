@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class FileService {
@@ -30,4 +32,7 @@ public class FileService {
         return fileRepository.save(entity);
     }
 
+    public List<Files> readFiles(Long location) {
+        return fileRepository.findByParent_DirSeq(location);
+    }
 }
