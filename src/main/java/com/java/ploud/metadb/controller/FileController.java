@@ -26,9 +26,8 @@ public class FileController {
     @PostMapping
     public ResponseEntity<?> upload(
             @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "ownerId", required = false) String ownerId,
-            @RequestParam(value = "group", required = false) String group) {
-
+            @RequestParam(value = "ownerId") String ownerId,
+            @RequestParam(value = "group") String group) {
         try {
             //스토리지
             ObjectWriteResponse upload = minioService.upload(file, ownerId, group);
@@ -40,5 +39,11 @@ public class FileController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> readFiles(@RequestParam(value = "ownerId") String ownerId, Long dir) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(fileService.readFiles(dir));
     }
 }
