@@ -39,4 +39,19 @@ public class Files {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Override
+    public String toString() {
+        return "Files{" + "\n" +
+                "fileSeq=" + fileSeq +"\n"+
+                ", ownerSeq='" + ownerSeq + "\n" +
+                ", storageKey='" + storageKey + "\n" +
+                ", title='" + title + "\n" +
+                ", originalFilename='" + originalFilename + "\n" +
+                ", size=" + size + "\n" +
+                ", contentType='" + contentType + "\n" +
+                ", parent=" + parent + "\n" +
+                ", createdAt=" + createdAt + "\n" +
+                '}';
+    }
 }
