@@ -46,4 +46,10 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(fileService.readFiles(dir));
     }
+
+    @PostMapping("/newroot")
+    public ResponseEntity<?> newRoot(@RequestParam(value = "ownerId") String ownerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(fileService.createRoot(ownerId));
+    }
 }
