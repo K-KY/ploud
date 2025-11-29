@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Table(name="directory", uniqueConstraints = {
+@Table(name = "directory", uniqueConstraints = {
         @UniqueConstraint(
                 name = "dir_owner_parent_unique",
                 columnNames = {"owner_id",
@@ -27,6 +27,7 @@ public class Directory {
 
     @Column(name = "dir_name")
     private String dirName;
+
     @Column(name = "owner_id")
     private String ownerId;
 
