@@ -1,6 +1,6 @@
 package com.java.ploud.metadb.service;
 
-import com.java.ploud.metadb.service.dto.FileUploadDto;
+import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
 import com.java.ploud.metadb.service.repository.FileRepository;
 import io.minio.ObjectWriteResponse;
@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -37,18 +38,26 @@ public class FileService {
 
         Files entity = Files.builder()
                 .ownerSeq(ownerId)
-                .title(originalFilename)
+                .title(Paths.get(originalFilename).getFileName().toString())
                 .storageKey(upload.object())
                 .originalFilename(multipartFile.getOriginalFilename())
                 .size(multipartFile.getSize())
                 .contentType(multipartFile.getContentType())
-                .parent(directoryService.findLastParent(originalFilename, ownerId))
+                .parent(getLastParent(ownerId, originalFilename))
                 .build();
 
         return fileRepository.save(entity);
     }
 
+    private Directory getLastParent(String ownerId, String originalFilename) {
+        return directoryService.findLastParent(originalFilename, ownerId);
+    }
+
     public List<Files> readFiles(Long location) {
         return fileRepository.findByParent_DirSeq(location);
+    }
+
+    public Directory createRoot(String ownerId) {
+        return directoryService.createRoot(ownerId);
     }
 }
