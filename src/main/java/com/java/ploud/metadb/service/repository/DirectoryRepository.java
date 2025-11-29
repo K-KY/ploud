@@ -16,4 +16,8 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     Optional<Directory> findByDirName(String dirName);
 
     Optional<Directory> findByDirNameAndParentIsNull(String dirName);
+
+    boolean existsByDirNameAndParentIsNull(String dirName);
+
+    Directory findByDirNameAndOwnerId(String dirName, String ownerId);
 }
