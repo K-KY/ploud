@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     Optional<Directory> findByDirNameAndParentAndOwnerId(String dirName, Directory parent, String ownerId);
+    Optional<Directory> findByDirNameAndParentDirSeqAndOwnerId(String dirName, Long parent, String ownerId);
 
     boolean existsByOwnerIdAndParentAndDirName(String ownerId, Directory parent, String dirName);
 
