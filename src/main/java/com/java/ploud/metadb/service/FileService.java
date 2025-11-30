@@ -50,7 +50,7 @@ public class FileService {
     }
 
     private Directory getLastParent(String ownerId, String originalFilename) {
-        return directoryService.findLastParent(originalFilename, ownerId);
+        return directoryService.findOrCreateLastParent(originalFilename, ownerId);
     }
 
     public List<Files> readFiles(Long location) {
