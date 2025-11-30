@@ -4,7 +4,10 @@ import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 // DirectoryService.java
 @Service
@@ -20,7 +23,8 @@ public class DirectoryService {
      * /1/2/3/4/5/filename -> 5 반환
      */
     // todo: 사용자의 현재 위치 반영 -> 만약 사용자가 root/1/2/3 에 있다면 업로드 시 root/1/2/3/.../file
-    public Directory findLastParent(String originalFilename, String ownerId) {
+    @Transactional
+    public Directory findOrCreateLastParent(String originalFilename, String ownerId) {
         // 동시성 문제 해결을 위햐 디렉토리 시작지점 조회하거나 새로 만들기
         Directory root = findRoot(ownerId);
         if (originalFilename == null || originalFilename.isBlank()) {
@@ -44,7 +48,8 @@ public class DirectoryService {
      * 부모 Directory와 dirName으로 DB에서 조회하고,
      * 없으면 생성하여 저장한 뒤 반환한다.
      */
-    private Directory findOrCreateChild(Directory parent, String dirName, String ownerId) {
+    @Transactional
+    public Directory findOrCreateChild(Directory parent, String dirName, String ownerId) {
         return directoryRepository.findByDirNameAndParentAndOwnerId(dirName, parent, ownerId)
                 .orElseGet(() -> saveNewDirectory(parent, dirName, ownerId));
     }
@@ -52,18 +57,38 @@ public class DirectoryService {
     /**
      * 새 Directory 엔티티를 생성하여 저장하고 반환.
      */
-
-    private Directory saveNewDirectory(Directory parent, String dirName, String ownerId) {
-        if (directoryRepository.existsByOwnerIdAndParentAndDirName(ownerId, parent, dirName)) {
-            return directoryRepository.findByDirNameAndParentAndOwnerId(dirName, parent, ownerId)
-                    .orElseThrow(() -> new IllegalArgumentException("오류 발생"));
+    @Transactional
+    public Directory saveNewDirectory(Directory parent, String dirName, String ownerId) {
+        Long parentId = null;
+        if (parent != null) {
+            parentId = parent.getDirSeq();
         }
+
+        //빠른 조회
+        Optional<Directory> existing = directoryRepository
+                .findByDirNameAndParentDirSeqAndOwnerId(dirName, parentId, ownerId);
+        if (existing.isPresent()) return existing.get();
+
+        //생성 시도
         Directory d = Directory.builder()
                 .dirName(dirName)
                 .parent(parent)
                 .ownerId(ownerId)
                 .build();
-        return directoryRepository.save(d);
+
+        try {
+            // saveAndFlush: 즉시 INSERT 시도 -> 제약 위반 시 예외 발생
+            return directoryRepository.saveAndFlush(d);
+        } catch (DataIntegrityViolationException e) {
+            // 예외 발생하면 다른 스레드가 먼저 만들었을 가능성 -> 재조회 후 반환
+            Optional<Directory> again = directoryRepository
+                    .findByDirNameAndParentDirSeqAndOwnerId(dirName, parentId, ownerId);
+            if (again.isPresent()) {
+                return again.get();
+            }
+            //없으면 예외 다시 던짐
+            throw e;
+        }
     }
 
     @Transactional
