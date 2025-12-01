@@ -21,4 +21,6 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     boolean existsByDirNameAndParentIsNull(String dirName);
 
     Directory findByDirNameAndOwnerId(String dirName, String ownerId);
+
+    List<Directory> findByOwnerIdAndParentDirSeq(String ownerId, Long parentSeq);
 }
