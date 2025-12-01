@@ -32,4 +32,12 @@ public class Directory {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_dir_seq")
     private Directory parent;
+
+
+    public Long getParentSeq() {
+        if (parent == null) {
+            return null;
+        }
+        return parent.getDirSeq();
+    }
 }
