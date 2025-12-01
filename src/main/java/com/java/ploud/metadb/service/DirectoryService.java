@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 // DirectoryService.java
@@ -106,5 +107,9 @@ public class DirectoryService {
 
     public Directory findRoot(String ownerId) {
         return directoryRepository.findByDirNameAndOwnerId(ROOT, ownerId);
+    }
+
+    public List<Directory> findDir(String ownerId, Long parentSeq) {
+        return directoryRepository.findByOwnerIdAndParentDirSeq(ownerId, parentSeq);
     }
 }
