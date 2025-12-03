@@ -2,10 +2,10 @@ package com.java.ploud.metadb.service;
 
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
