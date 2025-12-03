@@ -21,7 +21,7 @@ public class Directory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long dirSeq;
+    private Long dirSeq;
 
     @Column(name = "dir_name")
     private String dirName;
