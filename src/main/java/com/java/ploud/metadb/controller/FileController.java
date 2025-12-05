@@ -44,7 +44,7 @@ public class FileController {
     @GetMapping
     public ResponseEntity<?> readFiles(@RequestParam(value = "ownerId") String ownerId, Long dir) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.readFiles(dir));
+                .body(fileService.readFiles(ownerId, dir));
     }
 
     @PostMapping("/newroot")

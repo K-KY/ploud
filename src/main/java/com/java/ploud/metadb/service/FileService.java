@@ -57,6 +57,10 @@ public class FileService {
         return fileRepository.findByParent_DirSeq(location);
     }
 
+    public List<Files> readFiles(String ownerId, Long parentDirSeq) {
+        return fileRepository.findByOwnerSeqAndParent_DirSeq(ownerId, parentDirSeq);
+    }
+
     public Directory createRoot(String ownerId) {
         return directoryService.createRoot(ownerId);
     }
