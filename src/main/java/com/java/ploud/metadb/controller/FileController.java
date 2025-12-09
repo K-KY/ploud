@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.controller;
 
 import com.java.ploud.metadb.service.FileService;
+import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.entity.Files;
 import com.java.ploud.storage.service.MinioService;
 import io.minio.ObjectWriteResponse;
@@ -23,7 +24,7 @@ public class FileController {
     }
 
 
-    @PostMapping
+    @PostMapping("upload")
     public ResponseEntity<?> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "ownerId") String ownerId,
@@ -41,10 +42,10 @@ public class FileController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> readFiles(@RequestParam(value = "ownerId") String ownerId, Long dir) {
+    @PostMapping
+    public ResponseEntity<?> readFiles(@RequestBody FileDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.readFiles(ownerId, dir));
+                .body(fileService.readFiles(request.getOwnerId(), request.getParentSeq()));
     }
 
     @PostMapping("/newroot")
