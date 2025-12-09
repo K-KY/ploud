@@ -23,7 +23,7 @@ public class DirController {
      */
     @PostMapping
     public List<DirDto.Response> getDir(@RequestBody DirDto.Request request) {
-        return directoryService.findDir(request.ownerId, request.parentSeq)
+        return directoryService.findDir(request.getOwnerId(), request.getParentSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
                         .dirSeq(d.getDirSeq())
