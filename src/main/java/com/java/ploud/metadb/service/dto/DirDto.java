@@ -8,8 +8,8 @@ public class DirDto {
     @Getter
     @Builder
     public static class Request {
-        public String ownerId;
-        public Long parentSeq;
+        private String ownerId;
+        private Long parentSeq;
 
         public Request(String ownerId, Long parentSeq) {
             this.ownerId = ownerId;
@@ -22,10 +22,10 @@ public class DirDto {
     @Getter
     @Builder
     public static class Response {
-        public Long dirSeq;
-        public String ownerId;
-        public String dirName;
-        public Long parentSeq;
+        private Long dirSeq;
+        private String ownerId;
+        private String dirName;
+        private Long parentSeq;
 
         public Response(Long dirSeq, String ownerId, String dirName, Long parentSeq) {
             this.dirSeq = dirSeq;
