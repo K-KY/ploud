@@ -112,7 +112,11 @@ public class DirectoryService {
         return directoryRepository.findByDirNameAndOwnerId(ROOT, ownerId);
     }
 
-    public List<Directory> findDir(String ownerId, Long parentSeq) {
+    public List<Directory> findChildDir(String ownerId, Long parentSeq) {
         return directoryRepository.findByOwnerIdAndParentDirSeq(ownerId, parentSeq);
+    }
+
+    public Directory findDir(String ownerId, Long dirSeq) {
+        return directoryRepository.findByOwnerIdAndDirSeq(ownerId, dirSeq);
     }
 }
