@@ -2,6 +2,7 @@ package com.java.ploud.metadb.controller;
 
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
+import com.java.ploud.metadb.service.entity.Directory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +16,6 @@ public class DirController {
         this.directoryService = directoryService;
     }
 
-
     /**
      *
      * @param request - 조회용 postAPI
@@ -23,7 +23,7 @@ public class DirController {
      */
     @PostMapping
     public List<DirDto.Response> getDir(@RequestBody DirDto.Request request) {
-        return directoryService.findDir(request.getOwnerId(), request.getParentSeq())
+        return directoryService.findChildDir(request.getOwnerId(), request.getParentSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
                         .dirSeq(d.getDirSeq())
@@ -31,5 +31,18 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
+    }
+
+    @PostMapping("current")
+    public DirDto.Response getCurrent(@RequestBody DirDto.Request request) {
+
+        Directory parentDir = directoryService.findDir(request.getOwnerId(), request.getParentSeq());
+
+        return DirDto.Response.builder()
+                .dirSeq(parentDir.getDirSeq())
+                .dirName(parentDir.getDirName())
+                .parentSeq(parentDir.getParentSeq())
+                .ownerId(parentDir.getOwnerId())
+                .build();
     }
 }
