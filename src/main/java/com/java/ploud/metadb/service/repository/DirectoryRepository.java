@@ -39,4 +39,6 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     Directory findByDirNameAndOwnerId(String dirName, String ownerId);
 
     List<Directory> findByOwnerIdAndParentDirSeq(String ownerId, Long parentSeq);
+
+    Directory findByOwnerIdAndDirSeq(String ownerId, Long dirSeq);
 }
