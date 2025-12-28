@@ -29,6 +29,10 @@ dependencies {
     // MySQL
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
     // MinIO Java client
 // https://mvnrepository.com/artifact/io.minio/minio
     implementation 'io.minio:minio:8.6.0'
@@ -49,7 +53,6 @@ dependencies {
 
     //DOTENV
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
-
     implementation 'org.flywaydb:flyway-mysql'//db 스키마 버전 관리 도구
 
 
