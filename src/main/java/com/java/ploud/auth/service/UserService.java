@@ -4,14 +4,12 @@ import com.java.ploud.auth.dto.UserDto;
 import com.java.ploud.auth.entity.User;
 import com.java.ploud.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
 
     //todo : 이메일 인증
@@ -22,7 +20,7 @@ public class UserService {
 
         User user = User.builder()
                 .userEmail(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
+                .password(dto.getPassword())
                 .userName(dto.getUserName()).build();
         userRepository.save(user);
         return user;
