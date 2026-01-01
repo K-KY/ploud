@@ -17,4 +17,12 @@ public class User {
     @Column(unique = true)
     private String userEmail;
     private String password;
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void changeUserName(String userName) {
+        this.userName = userName;
+    }
 }
