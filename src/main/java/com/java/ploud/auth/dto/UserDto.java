@@ -23,11 +23,10 @@ public class UserDto {
         private Long userSeq;
         private String userEmail;
         private String userName;
-        private String email;
     }
 
     public static Response of(User user) {
         return Response.builder().userName(user.getUserName())
-                .email(user.getUserEmail()).build();
+                .userEmail(user.getUserEmail()).build();
     }
 }
