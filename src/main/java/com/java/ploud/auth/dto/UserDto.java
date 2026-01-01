@@ -25,6 +25,16 @@ public class UserDto {
         private String userName;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class Update {
+        private Long userSeq;
+        private String userEmail;
+        private String userName;
+        private String newPassword;
+    }
+
     public static Response of(User user) {
         return Response.builder().userName(user.getUserName())
                 .userEmail(user.getUserEmail()).build();
