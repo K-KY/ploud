@@ -7,10 +7,7 @@ import com.java.ploud.auth.service.PasswordEncryptor;
 import com.java.ploud.auth.service.TempUserService;
 import com.java.ploud.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,5 +29,10 @@ public class SignUpController {
         UserDto.Request tempUser = tempUserService.findByToken(token);
         User user = userService.createUser(tempUser);//임시저장된 데이터 영속화
         return UserDto.of(user);
+    }
+
+    @PatchMapping
+    public UserDto.Response updateUser(@RequestBody UserDto.Update dto) {
+        return UserDto.of(userService.updateUser(dto));
     }
 }
