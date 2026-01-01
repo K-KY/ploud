@@ -11,15 +11,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
 
-
-    //todo : 이메일 인증
     public User createUser(UserDto.Request dto) {
-        if (userRepository.existsByUserEmail(dto.getEmail())) {
+        if (userRepository.existsByUserEmail(dto.getUserEmail())) {
             throw new IllegalArgumentException("User already exists");
         }
 
         User user = User.builder()
-                .userEmail(dto.getEmail())
+                .userEmail(dto.getUserEmail())
                 .password(dto.getPassword())
                 .userName(dto.getUserName()).build();
         userRepository.save(user);

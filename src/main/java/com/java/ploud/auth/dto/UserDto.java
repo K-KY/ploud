@@ -12,7 +12,7 @@ public class UserDto {
     @AllArgsConstructor
     public static class Request {
         private String userName;
-        private String email;
+        private String userEmail;
         private String password;
     }
 
@@ -21,6 +21,7 @@ public class UserDto {
     @AllArgsConstructor
     public static class Response {
         private Long userSeq;
+        private String userEmail;
         private String userName;
         private String email;
     }
