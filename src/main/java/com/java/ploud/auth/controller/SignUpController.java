@@ -31,8 +31,4 @@ public class SignUpController {
         return UserDto.of(user);
     }
 
-    @PatchMapping
-    public UserDto.Response updateUser(@RequestBody UserDto.Update dto) {
-        return UserDto.of(userService.updateUser(dto));
-    }
 }
