@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -33,6 +34,8 @@ public class StorageController {
     //파일 사이즈
     //진짜 파일 이름
     //contentType
+    //todo 서버에서 업로드 하지 않음
+    @Deprecated
     @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(@ModelAttribute FileUploadDto.Request request) {
         try {
@@ -60,9 +63,9 @@ public class StorageController {
         }
     }
 
-
     @GetMapping
-    public String test() {
-        return "test";
+    public ResponseEntity<List<String>> getPreSignedUrl(FileUploadDto.Request request) {
+        return ResponseEntity.ok()
+                .body(minioService.getPreSignedUrl(request.getOwnerId(), request.getFileNames()));
     }
 }
