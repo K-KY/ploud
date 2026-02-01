@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * 스토리지에 저장할 데이터를 담은 dto
 * */
@@ -12,7 +14,9 @@ public class FileUploadDto {
     @Getter
     @Setter
     public static class Request {
-        private MultipartFile file;
+        @Deprecated
+        private MultipartFile file;// 곹 삭제할거
+        private List<String> fileNames;
         private String ownerId;
         private String group;
         private Boolean isHls;
