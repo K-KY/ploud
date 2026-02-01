@@ -2,7 +2,9 @@ package com.java.ploud.storage.service;
 
 import io.minio.*;
 import io.minio.errors.*;
+import io.minio.http.Method;
 import io.minio.messages.Item;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,14 +13,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.StringJoiner;
 
+@Slf4j
 @Service
 public class MinioService {
     private final MinioClient minioClient;
     private final String bucket;
     @Value("${minio.presign.expirySeconds}")
-    private int defaultExpirySeconds;
+    private int defaultExpirySeconds; // 하루
 
 
     public MinioService(MinioClient minioClient, @Value("${minio.bucket}") String bucket) {
@@ -71,12 +75,14 @@ public class MinioService {
     }
 
     /**
-     * @apiNote ownerId/group/multipartFileName 와 같은 "파일 이름"을 만들어 반환
      * @param ownerId
      * @param group
      * @param multipartFile
      * @return
+     * @apiNote ownerId/group/multipartFileName 와 같은 "파일 이름"을 만들어 반환
+     * @note group 삭제 예정
      */
+
     private String makeStorageName(String ownerId, String group, MultipartFile multipartFile) {
         StringJoiner stringJoiner = new StringJoiner("/", "/", "");
         stringJoiner.add(ownerId);
@@ -89,10 +95,10 @@ public class MinioService {
     }
 
     /**
-     * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      * @param ownerId
      * @param group
      * @return
+     * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
     private String makeStorageName(String ownerId, String group) {
         StringJoiner stringJoiner = new StringJoiner("/", "", "/");
@@ -101,5 +107,62 @@ public class MinioService {
             stringJoiner.add(group);
         }
         return stringJoiner.toString();
+    }
+
+    public List<String> getPreSignedUrl(String ownerId, List<String> fileNames) {
+        return fileNames.stream()
+                .map(f -> makeStorageName(ownerId, f))
+                .map(n -> getPreSignedUrl(ownerId, n))
+                .toList();
+    }
+
+    public String getPreSignedUrl(String ownerId, String fileName) {
+        if (checkExists(fileName)) {
+            throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
+        }
+
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .bucket(bucket)
+                            .object(ownerId + "/" + fileName)
+                            .method(Method.PUT)
+                            .expiry(defaultExpirySeconds)
+                            .build()
+            );
+        } catch (MinioException e) {
+            log.error("스토리지에 업로드 과정 중 예외 발생");
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        } catch (InvalidKeyException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public Boolean checkExists(String fileName) {
+        try {
+            minioClient.statObject(
+                    StatObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(fileName)
+                            .build()
+            );
+            return true; // 존재
+        } catch (ErrorResponseException e) {
+            if (e.errorResponse().code().equals("NoSuchKey")) {
+                return false; // 없음
+            }
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
