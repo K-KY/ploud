@@ -1,8 +1,7 @@
 package com.java.ploud.storage.service.dto;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,20 +11,9 @@ import java.util.List;
 public class FileUploadDto {
 
     @Getter
-    @Setter
+    @Builder
     public static class Request {
-        @Deprecated
-        private MultipartFile file;// 곹 삭제할거
-        private List<String> fileNames;
         private String ownerId;
-        private String group;
-        private Boolean isHls;
-
-        public Request(MultipartFile file, String ownerId, String group, Boolean isHls) {
-            this.file = file;
-            this.ownerId = ownerId;
-            this.group = group;
-            this.isHls = isHls;
-        }
+        private List<String> fileNames;
     }
 }
