@@ -96,22 +96,21 @@ public class MinioService {
 
     /**
      * @param ownerId
-     * @param group
+     * @param location
      * @return
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
-    private String makeStorageName(String ownerId, String group) {
+    private String makeStorageName(String ownerId, String location) {
         StringJoiner stringJoiner = new StringJoiner("/", "", "/");
         stringJoiner.add(ownerId);
-        if (group != null) {
-            stringJoiner.add(group);
+        if (location != null) {
+            stringJoiner.add(location);
         }
         return stringJoiner.toString();
     }
 
     public List<String> getPreSignedUrl(String ownerId, List<String> fileNames) {
         return fileNames.stream()
-                .map(f -> makeStorageName(ownerId, f))
                 .map(n -> getPreSignedUrl(ownerId, n))
                 .toList();
     }
@@ -125,7 +124,7 @@ public class MinioService {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(bucket)
-                            .object(ownerId + "/" + fileName)
+                            .object(makeStorageName(ownerId, fileName))
                             .method(Method.PUT)
                             .expiry(defaultExpirySeconds)
                             .build()
