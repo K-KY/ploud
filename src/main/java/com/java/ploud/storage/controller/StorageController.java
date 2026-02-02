@@ -63,8 +63,8 @@ public class StorageController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<String>> getPreSignedUrl(FileUploadDto.Request request) {
+    @PostMapping
+    public ResponseEntity<List<String>> getPreSignedUrl(@RequestBody FileUploadDto.PreSigned request) {
         return ResponseEntity.ok()
                 .body(minioService.getPreSignedUrl(request.getOwnerId(), request.getFileNames()));
     }
