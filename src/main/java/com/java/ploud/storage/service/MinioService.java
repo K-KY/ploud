@@ -1,5 +1,6 @@
 package com.java.ploud.storage.service;
 
+import com.java.ploud.storage.service.dto.PreSignedUrlDto;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
@@ -109,9 +110,10 @@ public class MinioService {
         return stringJoiner.toString();
     }
 
-    public List<String> getPreSignedUrl(String ownerId, List<String> fileNames) {
+    public List<PreSignedUrlDto.Response> getPreSignedUrl(String ownerId, List<PreSignedUrlDto.Request> fileNames) {
         return fileNames.stream()
-                .map(n -> getPreSignedUrl(ownerId, n))
+                .map(n -> new PreSignedUrlDto
+                        .Response(getPreSignedUrl(ownerId, n.getFileName()), n.getFileId(), n.getFileName()))
                 .toList();
     }
 
