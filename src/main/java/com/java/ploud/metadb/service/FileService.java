@@ -35,7 +35,7 @@ public class FileService {
         Files entity = Files.builder()
                 .ownerSeq(metaDataDto.getOwnerId())
                 .title(Paths.get(originalFilename).getFileName().toString())
-                .storageKey(metaDataDto.getStorageKey())
+                .storageKey(metaDataDto.getOwnerId()+"/"+originalFilename)
                 .originalFilename(originalFilename)
                 .size(metaDataDto.getSize())
                 .contentType(metaDataDto.getContentType())

@@ -12,7 +12,6 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 public class MetaDataDto {
-    private final String storageKey;
     private final String ownerId;
     private final String group;
     private final String originalFilename;
