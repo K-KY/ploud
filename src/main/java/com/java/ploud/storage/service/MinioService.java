@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -102,12 +103,12 @@ public class MinioService {
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
     private String makeStorageName(String ownerId, String location) {
-        StringJoiner stringJoiner = new StringJoiner("/", "", "/");
+        StringJoiner stringJoiner = new StringJoiner("/", "", "");
         stringJoiner.add(ownerId);
         if (location != null) {
             stringJoiner.add(location);
         }
-        return stringJoiner.toString();
+        return Normalizer.normalize(stringJoiner.toString(), Normalizer.Form.NFC);
     }
 
     public List<PreSignedUrlDto.Response> getPreSignedUrl(String ownerId, List<PreSignedUrlDto.Request> fileNames) {
