@@ -14,6 +14,6 @@ public class FileUploadDto {
     @Builder
     public static class Request {
         private String ownerId;
-        private List<String> fileNames;
+        private List<PreSignedUrlDto.Request> fileNames;
     }
 }
