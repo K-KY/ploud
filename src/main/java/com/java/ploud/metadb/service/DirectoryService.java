@@ -113,6 +113,10 @@ public class DirectoryService {
     }
 
     public List<Directory> findChildDir(String ownerId, Long parentSeq) {
+        if (parentSeq == null) {
+            Directory root = findRoot(ownerId);
+            return findChildDir(ownerId, root.getDirSeq());
+        }
         return directoryRepository.findByOwnerIdAndParentDirSeq(ownerId, parentSeq);
     }
 
