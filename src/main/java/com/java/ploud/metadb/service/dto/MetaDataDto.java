@@ -15,6 +15,7 @@ public class MetaDataDto {
     private final String ownerId;
     private final String originalFilename;
     private final String contentType;
+    private final String location;
     private final Long size;
     private final Boolean isHls;
 }
