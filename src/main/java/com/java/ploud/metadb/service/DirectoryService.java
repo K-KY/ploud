@@ -51,9 +51,7 @@ public class DirectoryService {
 
         while (attempt < maxRetries) {
             try {
-                return directoryTransactionService.findOrCreateChild(
-                        parent.getDirSeq(), dirName, ownerId
-                );
+                return directoryTransactionService.findOrCreateChild(parent.getDirSeq(), dirName, ownerId);
             } catch (Exception e) {
                 attempt++;
 
