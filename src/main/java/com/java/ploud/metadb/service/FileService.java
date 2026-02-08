@@ -31,15 +31,17 @@ public class FileService {
         //이거를 특정 구분자로 나누고 나눠진 문자열로 dir테이블에 저장
         //소유자에게 이미 해당하는 경로가 있으면 제외
         String originalFilename = metaDataDto.getOriginalFilename();
+        String location = metaDataDto.getLocation();
 
         Files entity = Files.builder()
                 .ownerSeq(metaDataDto.getOwnerId())
                 .title(Paths.get(originalFilename).getFileName().toString())
-                .storageKey(metaDataDto.getOwnerId()+"/"+originalFilename)
+                .storageKey(metaDataDto.getOwnerId() + "/" + location + originalFilename)
                 .originalFilename(originalFilename)
                 .size(metaDataDto.getSize())
                 .contentType(metaDataDto.getContentType())
-                .parent(getLastParent(metaDataDto.getOwnerId(), originalFilename))
+                .parent(getLastParent(metaDataDto.getOwnerId(), location + originalFilename))
+                //todo 존재하는 데이터를 다시 확인중임 프론트에서 현재 경로 pk를 같이 받아서 없는 경로부터 확인하도록 최적화
                 .build();
 
         return fileRepository.save(entity);
