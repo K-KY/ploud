@@ -13,9 +13,9 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class MetaDataDto {
     private final String ownerId;
-    private final String originalFilename;
+    private final String originalFilename; //사용자 저장공간 경로 //user/dir/file
+    private final String location; //앱 상에서 사용자가 보고있는 경로 //app/user/dir/file
     private final String contentType;
-    private final String location;
     private final Long size;
     private final Boolean isHls;
 }
