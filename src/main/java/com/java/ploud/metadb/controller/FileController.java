@@ -10,8 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/files")
@@ -23,7 +21,7 @@ public class FileController {
     }
 
     @PostMapping(value = "upload", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> upload(
+    public ResponseEntity<Files> upload(
             @RequestBody MetaDataDto request
     ) {
         try {
@@ -31,12 +29,7 @@ public class FileController {
             return ResponseEntity.ok(saved);
 
         } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of(
-                            "success", false,
-                            "message", e.getMessage()
-                    ));
+            throw new IllegalArgumentException(e);
         }
     }
 
