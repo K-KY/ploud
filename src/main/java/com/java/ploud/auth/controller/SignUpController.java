@@ -3,25 +3,29 @@ package com.java.ploud.auth.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.java.ploud.auth.dto.UserDto;
 import com.java.ploud.auth.entity.User;
+import com.java.ploud.auth.service.MailService;
 import com.java.ploud.auth.service.PasswordEncryptor;
 import com.java.ploud.auth.service.TempUserService;
 import com.java.ploud.auth.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("signup")
 @RequiredArgsConstructor
 public class SignUpController {
 
     private final TempUserService tempUserService;
     private final UserService userService;
     private final PasswordEncryptor passwordEncryptor;
+    private final MailService mailService;
 
     @PostMapping
-    public void signUp(@RequestBody UserDto.Request dto) throws JsonProcessingException {
+    public void signup(@RequestBody UserDto.Request dto) throws JsonProcessingException, MessagingException {
         UserDto.Request encrypted = passwordEncryptor.encrypt(dto);
         String token = tempUserService.save(encrypted);
-        //todo 이메일 전송
+        mailService.sendMail(encrypted.getUserEmail(), "회원가입 인증", token);
     }
 
     @GetMapping
