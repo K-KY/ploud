@@ -55,6 +55,10 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
     implementation 'org.flywaydb:flyway-mysql'//db 스키마 버전 관리 도구
 
+    //mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
