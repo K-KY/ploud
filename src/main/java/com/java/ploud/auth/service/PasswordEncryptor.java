@@ -15,7 +15,7 @@ public class PasswordEncryptor {
         String password = passwordEncoder.encode(dto.getPassword());
         return UserDto.Request.builder()
                 .userName(dto.getUserName())
-                .email(dto.getEmail())
+                .userEmail(dto.getUserEmail())
                 .password(password)
                 .build();
     }
