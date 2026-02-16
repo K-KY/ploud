@@ -3,7 +3,6 @@ package com.java.ploud.auth.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.java.ploud.auth.dto.UserDto;
-import com.java.ploud.auth.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TempUserService {
 
+    private static final String TEMP_USER = "temp_user_";
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
     //인증되지 않은 사용자 임시저장
     public String save(UserDto.Request user) throws JsonProcessingException {
         String token = UUID.randomUUID().toString();
-        String key = "temp_user_" + token;
+        String key = TEMP_USER + token;
 
         String jsonString = objectMapper.writeValueAsString(user);
         stringRedisTemplate.opsForValue().set(key, jsonString, Duration.ofMinutes(10));
