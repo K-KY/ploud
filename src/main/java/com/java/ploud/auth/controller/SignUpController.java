@@ -31,6 +31,9 @@ public class SignUpController {
     @GetMapping
     public UserDto.Response verify(String token) throws JsonProcessingException {
         UserDto.Request tempUser = tempUserService.findByToken(token);
+        if (tempUser == null) {
+            throw new IllegalArgumentException("토큰이 존재하지 않음");
+        }
         User user = userService.createUser(tempUser);//임시저장된 데이터 영속화
         return UserDto.of(user);
     }
