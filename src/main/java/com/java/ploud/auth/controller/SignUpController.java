@@ -3,7 +3,7 @@ package com.java.ploud.auth.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.java.ploud.auth.dto.UserDto;
 import com.java.ploud.auth.entity.User;
-import com.java.ploud.auth.service.MailService;
+import com.java.ploud.auth.service.mail.MailService;
 import com.java.ploud.auth.service.PasswordEncryptor;
 import com.java.ploud.auth.service.TempUserService;
 import com.java.ploud.auth.service.UserService;
