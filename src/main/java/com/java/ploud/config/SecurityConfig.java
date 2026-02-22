@@ -48,16 +48,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(
             HttpSecurity http
     ) throws Exception {
@@ -66,7 +56,7 @@ public class SecurityConfig {
 
         builder
                 .userDetailsService(userService)
-                .passwordEncoder(passwordEncoder());
+                .passwordEncoder(passwordEncoder);
         return builder.build();
     }
 }
