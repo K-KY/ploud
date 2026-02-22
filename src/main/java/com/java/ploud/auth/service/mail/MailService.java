@@ -1,4 +1,4 @@
-package com.java.ploud.auth.service;
+package com.java.ploud.auth.service.mail;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
