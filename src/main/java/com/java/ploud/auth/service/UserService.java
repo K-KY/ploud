@@ -1,16 +1,20 @@
 package com.java.ploud.auth.service;
 
+import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.auth.dto.UserDto;
 import com.java.ploud.auth.entity.User;
 import com.java.ploud.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     public User createUser(UserDto.Request dto) {
@@ -37,6 +41,22 @@ public class UserService {
             user.changePassword(dto.getNewPassword());
             user.changeUserName(dto.getUserName());
         }
-        throw new IllegalArgumentException("Illegal update");
+        throw new IllegalArgumentException( );
+    }
+
+    public User findByUserEmail(String userEmail) {
+        return userRepository.findByUserEmail(userEmail);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUserEmail(username);
+
+        return AuthedUserDetail.builder()
+                .userSeq(user.getUserSeq())
+                .userEmail(user.getUserEmail())
+                .userName(user.getUserName())
+                .userPassword(user.getPassword())
+                .build();
     }
 }
