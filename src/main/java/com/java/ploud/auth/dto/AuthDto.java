@@ -5,6 +5,14 @@ public class AuthDto {
         private String userEmail;
         private String userPassword;
 
+        public Request(String userEmail, String userPassword) {
+            this.userEmail = userEmail;
+            this.userPassword = userPassword;
+        }
+
+        public Request() {
+        }
+
         public String getUserEmail() {
             return userEmail;
         }
