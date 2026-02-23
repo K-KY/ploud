@@ -34,6 +34,10 @@ public class JwtFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+        if (!"POST".equals(request.getMethod())) {
+            throw new AuthenticationServiceException(
+                    "Authentication method not supported: " + request.getMethod());
+        }
 
         try {
             AuthDto.Request authRequest
