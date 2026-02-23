@@ -18,6 +18,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +34,10 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173"};
+    private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
+    private static final String[] WHITELIST_URI = {"/login", "/signup"};
 
     public SecurityConfig(UserService userService, JwtService jwtService, JwtProvider jwtProvider,
                           ObjectMapper objectMapper, PasswordEncoder passwordEncoder,
@@ -50,6 +60,8 @@ public class SecurityConfig {
                 new JwtFilter(authenticationManager, objectMapper, jwtService);
 
         http
+                //CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 //CSRF 보호 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
 
@@ -59,7 +71,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup")
+                        .requestMatchers(WHITELIST_URI)
                         .permitAll()
                         .anyRequest().authenticated()
                 )
@@ -89,4 +101,21 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder);
         return builder.build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(Arrays.asList(WHITELIST_ORIGIN));
+        configuration.setAllowedMethods(Arrays.asList(WHITELIST_METHODS));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
 }
