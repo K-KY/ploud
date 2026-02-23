@@ -1,5 +1,6 @@
 package com.java.ploud.jwt.filter;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.java.ploud.auth.dto.AuthDto;
 import com.java.ploud.auth.dto.AuthedUserDetail;
@@ -40,6 +41,8 @@ public class JwtFilter extends UsernamePasswordAuthenticationFilter {
             UsernamePasswordAuthenticationToken token
                     = new UsernamePasswordAuthenticationToken(authRequest.getUserEmail(), authRequest.getUserPassword());
             return getAuthenticationManager().authenticate(token);
+        } catch (JsonMappingException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
         } catch (IOException e) {
             throw new AuthenticationServiceException("Failed to authenticate user", e);
         }
