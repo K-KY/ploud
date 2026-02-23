@@ -59,8 +59,7 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        //모든 경로 허용
-                        .requestMatchers("/login")
+                        .requestMatchers("/login", "/signup")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
