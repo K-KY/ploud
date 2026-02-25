@@ -1,9 +1,6 @@
 package com.java.ploud.auth.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class AuthedUserDetail implements UserDetails {
     private Long userSeq;
-    private String userName;
     private String userEmail;
     private String userPassword;
+    private String role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

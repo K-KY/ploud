@@ -55,8 +55,13 @@ public class UserService implements UserDetailsService {
         return AuthedUserDetail.builder()
                 .userSeq(user.getUserSeq())
                 .userEmail(user.getUserEmail())
-                .userName(user.getUserName())
                 .userPassword(user.getPassword())
+                .role("ROLE_USER")
                 .build();
+    }
+
+    public User findByUserSeq(Long tokenUser) {
+        return userRepository.findById(tokenUser)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 사용자를 찾을 수 없음"));
     }
 }
