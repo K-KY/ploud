@@ -29,18 +29,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
         if (token != null && jwtProvider.validateToken(token)) {
             Claims claims = jwtProvider.parseClaims(token);
-
-            Long userId = Long.valueOf(claims.getSubject());
+            Long userSeq = Long.valueOf(claims.getSubject());
             String userName = claims.get("username", String.class);
             String role = claims.get("role", String.class);
 
 
-            AuthedUserDetail authDetails = new AuthedUserDetail(userId, userName, "", role);
+            //이미 인증된 상태라 비밀번호 불필요
+            AuthedUserDetail authDetails = new AuthedUserDetail(userSeq, userName, null, role);
 
 
             Authentication auth = new UsernamePasswordAuthenticationToken(
                     authDetails,
-                    null,//password는 불필요하므로 null
+                    null,
                     List.of(new SimpleGrantedAuthority(role))
             );
 
