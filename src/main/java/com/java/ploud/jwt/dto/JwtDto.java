@@ -24,4 +24,16 @@ public class JwtDto {
             return token;
         }
     }
+
+    public static class Response {
+        private final String accessToken;
+
+        public Response(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+    }
 }
