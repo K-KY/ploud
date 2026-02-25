@@ -78,7 +78,7 @@ public class JwtProvider {
                 .maxAge(Duration.ofDays(30))
                 .httpOnly(true)//개발자 콘솔에서 읽지 못하게
                 .secure(false)//https 필수 옵션인데 지금 없으니 일단 false
-                .sameSite("None")//요청부와 응답부 도메인이 같아야하는가?
+                .sameSite("Lax")//요청부와 응답부 도메인이 같아야하는가?
                 .path("/refresh")//이 경로로 사작하는 요청에만 이 쿠키를 자동으로 포함 시킴
                 .build();
     }
