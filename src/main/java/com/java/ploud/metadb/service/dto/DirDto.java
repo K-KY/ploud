@@ -16,7 +16,8 @@ public class DirDto {
             this.parentSeq = parentSeq;
         }
 
-
+        public Request() {
+        }
     }
 
     @Getter
