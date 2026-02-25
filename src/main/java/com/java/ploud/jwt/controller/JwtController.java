@@ -1,5 +1,6 @@
 package com.java.ploud.jwt.controller;
 
+import com.google.common.net.HttpHeaders;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.auth.entity.User;
 import com.java.ploud.auth.service.UserService;
@@ -27,6 +28,9 @@ public class JwtController {
                 .userPassword(byUserSeq.getPassword())
                 .role("ROLE_USER")
                 .build());
-        return ResponseEntity.ok(new JwtDto.Response(accessToken));
+        JwtDto.RefreshToken refreshToken = jwtService.createRefreshToken(byUserSeq.getUserSeq());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshToken.getTokenString())
+                .body(new JwtDto.Response(accessToken));
     }
 }
