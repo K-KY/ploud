@@ -14,6 +14,9 @@ public class FileDto {
             this.ownerId = ownerId;
             this.parentSeq = parentSeq;
         }
+
+        public Request() {
+        }
     }
 
     @Getter
