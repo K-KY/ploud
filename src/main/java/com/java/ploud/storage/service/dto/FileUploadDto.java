@@ -13,7 +13,6 @@ public class FileUploadDto {
     @Getter
     @Builder
     public static class Request {
-        private String ownerId;
         private List<PreSignedUrlDto.Request> fileNames;
     }
 }

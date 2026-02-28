@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service;
 
+import com.java.ploud.auth.entity.User;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import jakarta.persistence.EntityManager;
@@ -27,9 +28,9 @@ public class DirectoryTransactionService {
      * 새로운 트랜잭션에서 디렉토리 조회 또는 생성
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Directory findOrCreateChild(Long parentSeq, String dirName, String ownerId) {
+    public Directory findOrCreateChild(Long parentSeq, String dirName, Long userSeq) {
         //비관적 락으로 조회
-        Optional<Directory> existing = directoryRepository.findWithLock(dirName, parentSeq, ownerId);
+        Optional<Directory> existing = directoryRepository.findWithLock(dirName, parentSeq, userSeq);
         if (existing.isPresent()) {
             return existing.get();
         }
@@ -39,19 +40,21 @@ public class DirectoryTransactionService {
                 .orElseThrow(() -> new IllegalArgumentException("Parent directory not found: " + parentSeq));
 
         //없으면 생성
-        return saveNewDirectory(parent, dirName, ownerId);
+        return saveNewDirectory(parent, dirName, userSeq);
     }
 
     /**
      * 새 Directory 엔티티를 생성하여 저장하고 반환
      */
-    private Directory saveNewDirectory(Directory parent, String dirName, String ownerId) {
+    private Directory saveNewDirectory(Directory parent, String dirName, Long userSeq) {
         Long parentId = parent.getDirSeq();
 
         Directory d = Directory.builder()
                 .dirName(dirName)
                 .parent(parent)
-                .ownerId(ownerId)
+                .user(User.builder()
+                        .userSeq(userSeq)
+                        .build())
                 .build();
 
         try {
@@ -62,7 +65,7 @@ public class DirectoryTransactionService {
 
             // 동시성으로 인해 다른 트랜잭션이 생성했을 수 있으므로 재조회
             Optional<Directory> again = directoryRepository
-                    .findByDirNameAndParentDirSeqAndOwnerId(dirName, parentId, ownerId);
+                    .findByDirNameAndParentDirSeqAndUser_userSeq(dirName, parentId, userSeq);
 
             if (again.isPresent()) {
                 log.info("Directory '{}' was created by another transaction", dirName);

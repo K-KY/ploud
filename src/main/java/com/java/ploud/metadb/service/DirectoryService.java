@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service;
 
+import com.java.ploud.auth.entity.User;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,8 @@ public class DirectoryService {
      * 디렉토리 경로를 생성하거나 조회하여 최종 Directory를 반환.
      */
     @Transactional
-    public Directory findOrCreateLastParent(String originalFilename, String ownerId) {
-        Directory root = findRoot(ownerId);
+    public Directory findOrCreateLastParent(String originalFilename, Long userSeq) {
+        Directory root = findRoot(userSeq);
         if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Original filename cannot be null or empty");
         }
@@ -37,7 +38,7 @@ public class DirectoryService {
         Directory parent = root;
         for (int i = 0; i < parts.length - 1; i++) {
             String dirName = parts[i];
-            parent = findOrCreateChildWithRetry(parent, dirName, ownerId);
+            parent = findOrCreateChildWithRetry(parent, dirName, userSeq);
         }
         return parent;
     }
@@ -45,13 +46,13 @@ public class DirectoryService {
     /**
      * 재시도 로직 포함 - 데드락 발생 시 재시도
      */
-    private Directory findOrCreateChildWithRetry(Directory parent, String dirName, String ownerId) {
+    private Directory findOrCreateChildWithRetry(Directory parent, String dirName, Long userSeq) {
         int maxRetries = 3;
         int attempt = 0;
 
         while (attempt < maxRetries) {
             try {
-                return directoryTransactionService.findOrCreateChild(parent.getDirSeq(), dirName, ownerId);
+                return directoryTransactionService.findOrCreateChild(parent.getDirSeq(), dirName, userSeq);
             } catch (Exception e) {
                 attempt++;
 
@@ -94,31 +95,33 @@ public class DirectoryService {
     }
 
     @Transactional
-    public Directory createRoot(String ownerId) {
-        if (directoryRepository.existsByDirNameAndParentIsNull(ownerId)) {
+    public Directory createRoot(Long userSeq) {
+        if (directoryRepository.existsByUser_UserSeqAndParentIsNull(userSeq)) {
             throw new IllegalArgumentException("[ERROR] 이미 루트가 존재합니다.");
         }
 
         return directoryRepository.saveAndFlush(Directory.builder()
                 .parent(null)
                 .dirName(ROOT)
-                .ownerId(ownerId)
+                        .user(User.builder()
+                                .userSeq(userSeq)
+                                .build())
                 .build());
     }
 
-    public Directory findRoot(String ownerId) {
-        return directoryRepository.findByDirNameAndOwnerId(ROOT, ownerId);
+    public Directory findRoot(Long userSeq) {
+        return directoryRepository.findByDirNameAndUser_UserSeq(ROOT, userSeq);
     }
 
-    public List<Directory> findChildDir(String ownerId, Long parentSeq) {
+    public List<Directory> findChildDir(Long userSeq, Long parentSeq) {
         if (parentSeq == null) {
-            Directory root = findRoot(ownerId);
-            return findChildDir(ownerId, root.getDirSeq());
+            Directory root = findRoot(userSeq);
+            return findChildDir(userSeq, root.getDirSeq());
         }
-        return directoryRepository.findByOwnerIdAndParentDirSeq(ownerId, parentSeq);
+        return directoryRepository.findByUser_UserSeqAndParentDirSeq(userSeq, parentSeq);
     }
 
-    public Directory findDir(String ownerId, Long dirSeq) {
-        return directoryRepository.findByOwnerIdAndDirSeq(ownerId, dirSeq);
+    public Directory findDir(Long userSeq, Long dirSeq) {
+        return directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, dirSeq);
     }
 }

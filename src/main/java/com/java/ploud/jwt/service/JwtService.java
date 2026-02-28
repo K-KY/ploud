@@ -26,6 +26,7 @@ public class JwtService {
     }
 
     //요청 받은 RT가 서버에 있는지 확인
+    //해당 토큰의 사용자 Pk 반환
     public String findAuthSeqByRefreshTokenId(String token) {
         Claims claims = getClaims(token);
         String tokenId = claims.getSubject();

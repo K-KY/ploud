@@ -1,8 +1,10 @@
 package com.java.ploud.metadb.controller;
 
+import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.entity.Directory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,27 +24,25 @@ public class DirController {
      * @return - parentSeq를 부모로 갖는 하위 디렉토리
      */
     @PostMapping
-    public List<DirDto.Response> getDir(@RequestBody DirDto.Request request) {
-        return directoryService.findChildDir(request.getOwnerId(), request.getParentSeq())
+    public List<DirDto.Response> getDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
+        return directoryService.findChildDir(userDetail.getUserSeq(), request.getParentSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
                         .dirSeq(d.getDirSeq())
-                        .ownerId(d.getOwnerId())
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
     }
 
     @PostMapping("current")
-    public DirDto.Response getCurrent(@RequestBody DirDto.Request request) {
+    public DirDto.Response getCurrent(@AuthenticationPrincipal AuthedUserDetail userDetail,@RequestBody DirDto.Request request) {
 
-        Directory parentDir = directoryService.findDir(request.getOwnerId(), request.getParentSeq());
+        Directory parentDir = directoryService.findDir(userDetail.getUserSeq(), request.getParentSeq());
 
         return DirDto.Response.builder()
                 .dirSeq(parentDir.getDirSeq())
                 .dirName(parentDir.getDirName())
                 .parentSeq(parentDir.getParentSeq())
-                .ownerId(parentDir.getOwnerId())
                 .build();
     }
 }

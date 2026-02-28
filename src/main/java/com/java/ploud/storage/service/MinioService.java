@@ -50,12 +50,12 @@ public class MinioService {
         }
     }
 
-    public Iterable<Result<Item>> readCurrentList(String ownerId, String location) {
+    public Iterable<Result<Item>> readCurrentList(Long userSeq, String location) {
         Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs
                 .builder()
                 .bucket(bucket)
                 .delimiter("/")
-                .prefix(makeStorageName(ownerId, location))
+                .prefix(makeStorageName(userSeq, location))
                 .recursive(false)
                 .build());
 
@@ -97,28 +97,28 @@ public class MinioService {
     }
 
     /**
-     * @param ownerId
+     *
      * @param location
      * @return
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
-    private String makeStorageName(String ownerId, String location) {
+    private String makeStorageName(Long userSeq, String location) {
         StringJoiner stringJoiner = new StringJoiner("/", "", "");
-        stringJoiner.add(ownerId);
+        stringJoiner.add(String.valueOf(userSeq));
         if (location != null) {
             stringJoiner.add(location);
         }
         return Normalizer.normalize(stringJoiner.toString(), Normalizer.Form.NFC);
     }
 
-    public List<PreSignedUrlDto.Response> getPreSignedUrl(String ownerId, List<PreSignedUrlDto.Request> fileNames) {
+    public List<PreSignedUrlDto.Response> getPreSignedUrl(Long userSeq, List<PreSignedUrlDto.Request> fileNames) {
         return fileNames.stream()
                 .map(n -> new PreSignedUrlDto
-                        .Response(getPreSignedUrl(ownerId, n.getFileName()), n.getFileId(), n.getFileName()))
+                        .Response(getPreSignedUrl(userSeq, n.getFileName()), n.getFileId(), n.getFileName()))
                 .toList();
     }
 
-    public String getPreSignedUrl(String ownerId, String fileName) {
+    public String getPreSignedUrl(Long userSeq, String fileName) {
         if (checkExists(fileName)) {
             throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
         }
@@ -127,7 +127,7 @@ public class MinioService {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(bucket)
-                            .object(makeStorageName(ownerId, fileName))
+                            .object(makeStorageName(userSeq, fileName))
                             .method(Method.PUT)
                             .expiry(defaultExpirySeconds)
                             .build()

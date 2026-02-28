@@ -15,20 +15,21 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT d FROM Directory d WHERE d.dirName = :dirName " +
             "AND (:parentSeq IS NULL AND d.parent IS NULL OR d.parent.dirSeq = :parentSeq) " +
-            "AND d.ownerId = :ownerId")
+            "AND d.user.userSeq = :userSeq")
     Optional<Directory> findWithLock(
             @Param("dirName") String dirName,
             @Param("parentSeq") Long parentSeq,
-            @Param("ownerId") String ownerId
+            @Param("userSeq") Long userSeq
     );
 
 
-    Optional<Directory> findByDirNameAndParentAndOwnerId(String dirName, Directory parent, String ownerId);
-    Optional<Directory> findByDirNameAndParentDirSeqAndOwnerId(String dirName, Long parent, String ownerId);
+//    Optional<Directory> findByDirNameAndParentAndOwnerId(String dirName, Directory parent, String ownerId);
+//    Optional<Directory> findByDirNameAndParentDirSeqAndOwnerId(String dirName, Long parent, String ownerId);
+    Optional<Directory> findByDirNameAndParentDirSeqAndUser_userSeq(String dirName, Long parent, Long userSeq);
 
-    boolean existsByOwnerIdAndParentAndDirName(String ownerId, Directory parent, String dirName);
-
-    List<Directory> findByOwnerId(String ownerId);
+//    boolean existsByOwnerIdAndParentAndDirName(String ownerId, Directory parent, String dirName);
+//
+//    List<Directory> findByOwnerId(String ownerId);
 
     Optional<Directory> findByDirName(String dirName);
 
@@ -36,9 +37,17 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
 
     boolean existsByDirNameAndParentIsNull(String dirName);
 
-    Directory findByDirNameAndOwnerId(String dirName, String ownerId);
+    Boolean existsByUser_UserSeqAndParentIsNull(Long userSeq);
 
-    List<Directory> findByOwnerIdAndParentDirSeq(String ownerId, Long parentSeq);
+//    Directory findByDirNameAndOwnerId(String dirName, String ownerId);
+//
+//    List<Directory> findByOwnerIdAndParentDirSeq(String ownerId, Long parentSeq);
 
-    Directory findByOwnerIdAndDirSeq(String ownerId, Long dirSeq);
+//    Directory findByOwnerIdAndDirSeq(String ownerId, Long dirSeq);
+
+    Directory findByDirNameAndUser_UserSeq(String dirName, Long userUserSeq);
+
+    List<Directory> findByUser_UserSeqAndParentDirSeq(Long userSeq, Long userUserSeq);
+
+    Directory findByUser_UserSeqAndDirSeq(Long userSeq, Long dirSeq);
 }

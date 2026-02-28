@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service.entity;
 
+import com.java.ploud.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,8 +27,8 @@ public class Directory {
     @Column(name = "dir_name")
     private String dirName;
 
-    @Column(name = "owner_id")
-    private String ownerId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_dir_seq")

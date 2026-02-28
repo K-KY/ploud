@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service.entity;
 
+import com.java.ploud.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,8 @@ public class Files {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fileSeq;
 
-    @Column
-    private String ownerSeq;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user;
 
     @Column(name = "storage_key", nullable = false)
     private String storageKey;
@@ -41,19 +42,4 @@ public class Files {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Override
-    public String toString() {
-        return "Files{" + "\n" +
-                "fileSeq=" + fileSeq +"\n"+
-                ", ownerSeq='" + ownerSeq + "\n" +
-                ", storageKey='" + storageKey + "\n" +
-                ", title='" + title + "\n" +
-                ", originalFilename='" + originalFilename + "\n" +
-                ", size=" + size + "\n" +
-                ", contentType='" + contentType + "\n" +
-                ", parent=" + parent + "\n" +
-                ", createdAt=" + createdAt + "\n" +
-                '}';
-    }
 }

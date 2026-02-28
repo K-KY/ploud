@@ -7,11 +7,9 @@ public class FileDto {
     @Getter
     @Builder
     public static class Request {
-        private String ownerId;
         private Long parentSeq;
 
-        public Request(String ownerId, Long parentSeq) {
-            this.ownerId = ownerId;
+        public Request(Long parentSeq) {
             this.parentSeq = parentSeq;
         }
 
