@@ -1,7 +1,9 @@
 package com.java.ploud.storage.service.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ public class FileUploadDto {
 
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Request {
         private List<PreSignedUrlDto.Request> fileNames;
     }

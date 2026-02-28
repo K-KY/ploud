@@ -2,11 +2,13 @@ package com.java.ploud.storage.service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class PreSignedUrlDto {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class Request {
         private String fileName;
         private String fileId;
