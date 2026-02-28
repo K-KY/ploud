@@ -63,6 +63,9 @@ public class FileService {
     }
 
     public List<Files> readFiles(Long userSeq, Long parentDirSeq) {
+        if (parentDirSeq == null) {
+            return fileRepository.findByUser_UserSeqAndParent_DirSeq(userSeq, directoryService.findRoot(userSeq).getDirSeq());
+        }
         return fileRepository.findByUser_UserSeqAndParent_DirSeq(userSeq, parentDirSeq);
     }
 
