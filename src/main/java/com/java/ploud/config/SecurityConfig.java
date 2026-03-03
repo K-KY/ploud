@@ -37,7 +37,7 @@ public class SecurityConfig {
 
     private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173"};
     private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
-    private static final String[] WHITELIST_URI = {"/login", "/signup", "/refresh"};
+    private static final String[] WHITELIST_URI = {"/login","/logout", "/signup", "/refresh"};
 
     public SecurityConfig(UserService userService, JwtService jwtService, JwtProvider jwtProvider,
                           ObjectMapper objectMapper, PasswordEncoder passwordEncoder,
@@ -64,7 +64,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 //CSRF 보호 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
-
+                //시큐리티 기본 로그아웃 비활성화
+                .logout(AbstractHttpConfigurer::disable)
                 //세션 관리 정책 설정
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
