@@ -5,6 +5,7 @@ import com.java.ploud.jwt.JwtProvider;
 import com.java.ploud.jwt.dto.JwtDto;
 import io.jsonwebtoken.Claims;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -60,5 +61,9 @@ public class JwtService {
         JwtDto.RefreshToken dto = jwtProvider.createRefreshToken();//rt 생성
         redisTemplate.opsForValue().set(dto.getId(), String.valueOf(userSeq), Duration.ofDays(30));//uuid -> authSeq
         return dto;
+    }
+
+    public ResponseCookie expireCookie() {
+        return jwtProvider.expiryCookie();
     }
 }

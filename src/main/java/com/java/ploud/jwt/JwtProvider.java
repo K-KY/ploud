@@ -82,4 +82,14 @@ public class JwtProvider {
                 .path("/refresh")//이 경로로 사작하는 요청에만 이 쿠키를 자동으로 포함 시킴
                 .build();
     }
+
+    public ResponseCookie expiryCookie() {
+        return ResponseCookie.from("refresh_token", "")
+                .maxAge(Duration.ofDays(0))
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/refresh")
+                .build();
+    }
 }

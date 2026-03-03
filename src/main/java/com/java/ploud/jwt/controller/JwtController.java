@@ -6,7 +6,9 @@ import com.java.ploud.auth.entity.User;
 import com.java.ploud.auth.service.UserService;
 import com.java.ploud.jwt.dto.JwtDto;
 import com.java.ploud.jwt.service.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +20,7 @@ public class JwtController {
     private final JwtService jwtService;
     private final UserService userService;
 
+    //4번 호춝되고있음
     @PostMapping("refresh")
     public ResponseEntity<JwtDto.Response> refresh(@CookieValue("refresh_token") String token) {
         String tokenUser = jwtService.findAuthSeqByRefreshTokenId(token);
@@ -32,5 +35,14 @@ public class JwtController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshToken.getTokenString())
                 .body(new JwtDto.Response(accessToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        System.out.println("JwtController.logout");
+        ResponseCookie deleteCookie = jwtService.expireCookie();
+        response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+
+        return ResponseEntity.ok().build();
     }
 }
