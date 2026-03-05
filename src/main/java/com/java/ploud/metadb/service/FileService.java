@@ -7,6 +7,7 @@ import com.java.ploud.metadb.service.dto.MetaDataDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
 import com.java.ploud.metadb.service.repository.FileRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class FileService {
      * @return
      * @apiNote - 폴더로 업로드 시 폴더 이름이 원본 이름에 포함되는 현상
      */
+    @Transactional
     public Files upload(AuthedUserDetail userDetail, MetaDataDto metaDataDto) {
         //이거를 특정 구분자로 나누고 나눠진 문자열로 dir테이블에 저장
         //소유자에게 이미 해당하는 경로가 있으면 제외
