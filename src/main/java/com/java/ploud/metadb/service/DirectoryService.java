@@ -86,9 +86,11 @@ public class DirectoryService {
     private boolean isRetryable(Exception exception) {
         String message = exception.getMessage();
         if (message.contains("Lock wait timeout")) {
+            log.warn(exception.getMessage());
             return true;
         }
         if (message.contains("could not execute statement")) {
+            log.warn(exception.getMessage());
             return true;
         }
         return message.contains("Deadlock");
