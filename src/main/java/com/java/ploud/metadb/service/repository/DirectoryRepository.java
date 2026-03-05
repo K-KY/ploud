@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface DirectoryRepository extends JpaRepository<Directory, Long> {
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT d FROM Directory d WHERE d.dirName = :dirName " +
             "AND (:parentSeq IS NULL AND d.parent IS NULL OR d.parent.dirSeq = :parentSeq) " +
             "AND d.user.userSeq = :userSeq")
