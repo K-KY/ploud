@@ -34,6 +34,9 @@ public class Directory {
     @JoinColumn(name = "parent_dir_seq")
     private Directory parent;
 
+    @CreatedDate
+    private LocalDateTime created;
+
 
     public Long getParentSeq() {
         if (parent == null) {
