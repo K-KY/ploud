@@ -59,7 +59,6 @@ public class JwtProvider {
         }
     }
 
-
     public JwtDto.RefreshToken createRefreshToken() {
         String tokenId = UUID.randomUUID().toString();
         String token = Jwts.builder()

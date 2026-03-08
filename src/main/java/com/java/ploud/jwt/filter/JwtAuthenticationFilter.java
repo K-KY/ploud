@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userName = claims.get("username", String.class);
             String role = claims.get("role", String.class);
 
-
             //이미 인증된 상태라 비밀번호 불필요
             AuthedUserDetail authDetails = new AuthedUserDetail(userSeq, userName, null, role);
 

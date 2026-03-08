@@ -30,7 +30,5 @@ public class DirDto {
             this.dirName = dirName;
             this.parentSeq = parentSeq;
         }
-
-
     }
 }

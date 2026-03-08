@@ -22,14 +22,7 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
             @Param("userSeq") Long userSeq
     );
 
-
-//    Optional<Directory> findByDirNameAndParentAndOwnerId(String dirName, Directory parent, String ownerId);
-//    Optional<Directory> findByDirNameAndParentDirSeqAndOwnerId(String dirName, Long parent, String ownerId);
     Optional<Directory> findByDirNameAndParentDirSeqAndUser_userSeq(String dirName, Long parent, Long userSeq);
-
-//    boolean existsByOwnerIdAndParentAndDirName(String ownerId, Directory parent, String dirName);
-//
-//    List<Directory> findByOwnerId(String ownerId);
 
     Optional<Directory> findByDirName(String dirName);
 
@@ -38,12 +31,6 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     boolean existsByDirNameAndParentIsNull(String dirName);
 
     Boolean existsByUser_UserSeqAndParentIsNull(Long userSeq);
-
-//    Directory findByDirNameAndOwnerId(String dirName, String ownerId);
-//
-//    List<Directory> findByOwnerIdAndParentDirSeq(String ownerId, Long parentSeq);
-
-//    Directory findByOwnerIdAndDirSeq(String ownerId, Long dirSeq);
 
     Directory findByDirNameAndUser_UserSeq(String dirName, Long userUserSeq);
 

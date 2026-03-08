@@ -21,6 +21,4 @@ public class AuthConfig {
                 .addModule(new JavaTimeModule())
                 .build();
     }
-
-
 }

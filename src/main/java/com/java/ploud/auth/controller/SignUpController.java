@@ -37,5 +37,4 @@ public class SignUpController {
         User user = userService.createUser(tempUser);//임시저장된 데이터 영속화
         return UserDto.of(user);
     }
-
 }

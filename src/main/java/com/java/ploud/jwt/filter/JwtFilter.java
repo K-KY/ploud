@@ -71,5 +71,4 @@ public class JwtFilter extends UsernamePasswordAuthenticationFilter {
                 )
         );
     }
-
 }

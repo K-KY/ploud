@@ -42,7 +42,6 @@ public class Directory {
     @CreatedDate
     private LocalDateTime created;
 
-
     public Long getParentSeq() {
         if (parent == null) {
             return null;

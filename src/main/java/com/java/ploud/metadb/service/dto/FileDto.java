@@ -32,5 +32,4 @@ public class FileDto {
             this.parentSeq = parentSeq;
         }
     }
-
 }
