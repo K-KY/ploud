@@ -14,5 +14,6 @@ public class MetaDataDto {
     private String originalFilename; //사용자 저장공간 경로 //user/dir/file
     private String location; //앱 상에서 사용자가 보고있는 경로 //app/user/dir/file
     private String contentType;
+    private String storageKey;
     private Long size;
 }

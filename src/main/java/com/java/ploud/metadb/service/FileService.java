@@ -45,7 +45,7 @@ public class FileService {
         Files entity = Files.builder()
                 .user(user)
                 .title(Paths.get(originalFilename).getFileName().toString())
-                .storageKey(user.getUserSeq() + "/" + location + originalFilename)
+                .storageKey(metaDataDto.getStorageKey())
                 .originalFilename(originalFilename)
                 .size(metaDataDto.getSize())
                 .contentType(metaDataDto.getContentType())
