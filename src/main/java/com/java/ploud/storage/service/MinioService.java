@@ -119,7 +119,7 @@ public class MinioService {
     }
 
     public String getPreSignedUrl(Long userSeq, String fileName) {
-        if (checkExists(fileName)) {
+        if (checkExists(makeStorageName(userSeq, fileName))) {
             throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
         }
 
