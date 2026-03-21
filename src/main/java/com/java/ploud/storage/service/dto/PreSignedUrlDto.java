@@ -20,5 +20,6 @@ public class PreSignedUrlDto {
         private String preSignedUrl;
         private String fileId;
         private String fileName;
+        private String storageKey;
     }
 }

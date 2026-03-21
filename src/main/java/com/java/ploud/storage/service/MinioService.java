@@ -16,11 +16,15 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class MinioService {
+    private static final String URL = "URL";
+    private static final String STORAGE_KEY = "storageKey";
     private final MinioClient minioClient;
     private final String bucket;
     @Value("${minio.presign.expirySeconds}")
@@ -97,7 +101,6 @@ public class MinioService {
     }
 
     /**
-     *
      * @param location
      * @return
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
@@ -113,25 +116,38 @@ public class MinioService {
 
     public List<PreSignedUrlDto.Response> getPreSignedUrl(Long userSeq, List<PreSignedUrlDto.Request> fileNames) {
         return fileNames.stream()
-                .map(n -> new PreSignedUrlDto
-                        .Response(getPreSignedUrl(userSeq, n.getFileName()), n.getFileId(), n.getFileName()))
+                .map(n -> {
+                    Map<String, String> preSignedUrl = getPreSignedUrl(userSeq, n.getFileName());
+                    return new PreSignedUrlDto
+                            .Response(
+                            preSignedUrl.get(URL)
+                            , n.getFileId(), n.getFileName()
+                            ,preSignedUrl.get(STORAGE_KEY)
+                    );
+                })
                 .toList();
     }
 
-    public String getPreSignedUrl(Long userSeq, String fileName) {
+    public Map<String, String> getPreSignedUrl(Long userSeq, String fileName) {
         if (checkExists(makeStorageName(userSeq, fileName))) {
-            throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
+                int extensionStart = fileName.lastIndexOf('.');
+                String name = fileName.substring(0, extensionStart - 1);
+                String extension = fileName.substring(extensionStart);
+                fileName = name + "-" + UUID.randomUUID().toString().substring(0, 8) + extension;
+//            throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
         }
 
         try {
-            return minioClient.getPresignedObjectUrl(
+            String name = makeStorageName(userSeq, fileName);
+            String presignedObjectUrl = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(bucket)
-                            .object(makeStorageName(userSeq, fileName))
+                            .object(name)
                             .method(Method.PUT)
                             .expiry(defaultExpirySeconds)
                             .build()
             );
+            return Map.of(URL, presignedObjectUrl, STORAGE_KEY, name);
         } catch (MinioException e) {
             log.error("스토리지에 업로드 과정 중 예외 발생");
             log.error(e.getMessage());
