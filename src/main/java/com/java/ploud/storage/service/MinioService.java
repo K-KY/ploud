@@ -36,24 +36,6 @@ public class MinioService {
         this.bucket = bucket;
     }
 
-    public ObjectWriteResponse upload(MultipartFile multipartFile, String ownerId, String group) throws Exception {
-        checkBucket();
-
-        //스토리지 키는 사용자 명 + 그룹 + 파일 이름
-        String storageKey = makeStorageName(ownerId, group, multipartFile);
-
-        try (InputStream is = multipartFile.getInputStream()) {
-            return minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(storageKey)
-                            .stream(is, multipartFile.getSize(), -1)
-                            .contentType(multipartFile.getContentType())
-                            .build()
-            );
-        }
-    }
-
     public Iterable<Result<Item>> readCurrentList(Long userSeq, String location) {
         Iterable<Result<Item>> results = minioClient.listObjects(ListObjectsArgs
                 .builder()
@@ -78,26 +60,6 @@ public class MinioService {
         } catch (MinioException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @param ownerId
-     * @param group
-     * @param multipartFile
-     * @return
-     * @apiNote ownerId/group/multipartFileName 와 같은 "파일 이름"을 만들어 반환
-     * @note group 삭제 예정
-     */
-
-    private String makeStorageName(String ownerId, String group, MultipartFile multipartFile) {
-        StringJoiner stringJoiner = new StringJoiner("/", "/", "");
-        stringJoiner.add(ownerId);
-        if (group != null) {
-            stringJoiner.add(group);
-        }
-        stringJoiner.add(multipartFile.getOriginalFilename());
-
-        return stringJoiner.toString();
     }
 
     /**
