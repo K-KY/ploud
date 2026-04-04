@@ -8,10 +8,8 @@ import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
@@ -84,7 +82,7 @@ public class MinioService {
                             .Response(
                             preSignedUrl.get(URL)
                             , n.getFileId(), n.getFileName()
-                            ,preSignedUrl.get(STORAGE_KEY)
+                            , preSignedUrl.get(STORAGE_KEY)
                     );
                 })
                 .toList();
@@ -92,10 +90,10 @@ public class MinioService {
 
     public Map<String, String> getPreSignedUrl(Long userSeq, String fileName) {
         if (checkExists(makeStorageName(userSeq, fileName))) {
-                int extensionStart = fileName.lastIndexOf('.');
-                String name = fileName.substring(0, extensionStart - 1);
-                String extension = fileName.substring(extensionStart);
-                fileName = name + "-" + UUID.randomUUID().toString().substring(0, 8) + extension;
+            int extensionStart = fileName.lastIndexOf('.');
+            String name = fileName.substring(0, extensionStart - 1);
+            String extension = fileName.substring(extensionStart);
+            fileName = name + "-" + UUID.randomUUID().toString().substring(0, 8) + extension;
 //            throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
         }
 
@@ -128,15 +126,25 @@ public class MinioService {
     }
 
     //다운로드 용 preSignedUrl 메서드
-    public String getDownloadUrl(String storageKey) throws Exception {
-        return minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                        .method(Method.GET)
-                        .bucket(bucket)
-                        .object(storageKey)
-                        .expiry(60 * 60 * 24) // 24시간
-                        .build()
-        );
+    public PreSignedUrlDto.Response getDownloadUrl(Long userSeq, String fileName) {
+        String storageKey = makeStorageName(userSeq, fileName);
+        try {
+            String presignedObjectUrl = minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucket)
+                            .object(storageKey)
+                            .expiry(60 * 60 * 24) // 24시간
+                            .build()
+            );
+
+
+            return new PreSignedUrlDto.Response(presignedObjectUrl, null, null, null);
+        } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
+                 InvalidResponseException | IOException | NoSuchAlgorithmException | XmlParserException |
+                 ServerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Boolean checkExists(String fileName) {
