@@ -165,6 +165,18 @@ public class MinioService {
 
     }
 
+    //다운로드 용 preSignedUrl 메서드
+    public String getDownloadUrl(String storageKey) throws Exception {
+        return minioClient.getPresignedObjectUrl(
+                GetPresignedObjectUrlArgs.builder()
+                        .method(Method.GET)
+                        .bucket(bucket)
+                        .object(storageKey)
+                        .expiry(60 * 60 * 24) // 24시간
+                        .build()
+        );
+    }
+
     public Boolean checkExists(String fileName) {
         try {
             minioClient.statObject(
