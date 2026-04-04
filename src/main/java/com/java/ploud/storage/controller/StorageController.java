@@ -17,10 +17,19 @@ import java.util.List;
 public class StorageController {
 
     private final MinioService minioService;
+
     @PostMapping
     public ResponseEntity<List<PreSignedUrlDto.Response>> getPreSignedUrl(
             @AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileUploadDto.Request request) {
         return ResponseEntity.ok()
                 .body(minioService.getPreSignedUrl(userDetail.getUserSeq(), request.getFileNames()));
+    }
+
+    @GetMapping
+    public ResponseEntity<PreSignedUrlDto.Response> getDownloadUrl(
+            @AuthenticationPrincipal AuthedUserDetail userDetail,
+            @RequestBody PreSignedUrlDto.Request request) {
+       return  ResponseEntity.ok()
+               .body(minioService.getDownloadUrl(userDetail.getUserSeq(), request.getFileName()));
     }
 }
