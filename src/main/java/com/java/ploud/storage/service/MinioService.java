@@ -133,7 +133,10 @@ public class MinioService {
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucket)
-                            .object(storageKey)
+                            .object(storageKey).
+                            extraQueryParams(Map.of(
+                                    "response-content-disposition", "attachment;"
+                            ))
                             .expiry(60 * 60 * 24) // 24시간
                             .build()
             );
