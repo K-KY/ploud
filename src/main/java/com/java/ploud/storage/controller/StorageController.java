@@ -25,7 +25,7 @@ public class StorageController {
                 .body(minioService.getPreSignedUrl(userDetail.getUserSeq(), request.getFileNames()));
     }
 
-    @GetMapping
+    @PostMapping("download")
     public ResponseEntity<PreSignedUrlDto.Response> getDownloadUrl(
             @AuthenticationPrincipal AuthedUserDetail userDetail,
             @RequestBody PreSignedUrlDto.Request request) {
