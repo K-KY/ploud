@@ -30,6 +30,6 @@ public class StorageController {
             @AuthenticationPrincipal AuthedUserDetail userDetail,
             @RequestBody PreSignedUrlDto.Request request) {
        return  ResponseEntity.ok()
-               .body(minioService.getDownloadUrl(userDetail.getUserSeq(), request.getFileName()));
+               .body(minioService.getDownloadUrl(userDetail.getUserSeq(), request));
     }
 }

@@ -126,14 +126,13 @@ public class MinioService {
     }
 
     //다운로드 용 preSignedUrl 메서드
-    public PreSignedUrlDto.Response getDownloadUrl(Long userSeq, String fileName) {
-        String storageKey = makeStorageName(userSeq, fileName);
+    public PreSignedUrlDto.Response getDownloadUrl(Long userSeq, PreSignedUrlDto.Request dto) {
         try {
             String presignedObjectUrl = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucket)
-                            .object(storageKey).
+                            .object(dto.getStorageKey()).
                             extraQueryParams(Map.of(
                                     "response-content-disposition", "attachment;"
                             ))

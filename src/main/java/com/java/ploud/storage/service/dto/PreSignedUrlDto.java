@@ -12,6 +12,7 @@ public class PreSignedUrlDto {
     public static class Request {
         private String fileName;
         private String fileId;
+        private String storageKey;
     }
 
     @Getter
