@@ -81,7 +81,7 @@ public class MinioService {
                     return new PreSignedUrlDto
                             .Response(
                             preSignedUrl.get(URL)
-                            , n.getFileId(), n.getFileName()
+                            , String.valueOf(n.getFileId()), n.getFileName()
                             , preSignedUrl.get(STORAGE_KEY)
                     );
                 })
