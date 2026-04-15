@@ -8,4 +8,6 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<Files, Long> {
     List<Files> findByParent_DirSeq(Long parent);
     List<Files> findByUser_UserSeqAndParent_DirSeq(Long userSeq, Long parent);
+
+    void deleteByUser_userSeqAndFileSeq(Long userUserSeq, Long fileSeq);
 }
