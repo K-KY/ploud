@@ -149,6 +149,20 @@ public class MinioService {
         }
     }
 
+    public void deleteFile(Long userSeq, PreSignedUrlDto.Request dto) {
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(dto.getStorageKey())
+                            .build()
+            );
+        } catch (ErrorResponseException | InsufficientDataException | InternalException |
+                 InvalidKeyException | InvalidResponseException | IOException |
+                 NoSuchAlgorithmException | XmlParserException | ServerException e) {
+            throw new RuntimeException("파일 삭제 실패", e);
+        }
+    }
     public Boolean checkExists(String fileName) {
         try {
             minioClient.statObject(
