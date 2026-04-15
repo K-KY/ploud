@@ -1,6 +1,7 @@
 package com.java.ploud.storage.controller;
 
 import com.java.ploud.auth.dto.AuthedUserDetail;
+import com.java.ploud.metadb.service.FileService;
 import com.java.ploud.storage.service.dto.FileUploadDto;
 import com.java.ploud.storage.service.MinioService;
 import com.java.ploud.storage.service.dto.PreSignedUrlDto;
@@ -17,6 +18,7 @@ import java.util.List;
 public class StorageController {
 
     private final MinioService minioService;
+    private final FileService fileService;
 
     @PostMapping
     public ResponseEntity<List<PreSignedUrlDto.Response>> getPreSignedUrl(
@@ -31,5 +33,15 @@ public class StorageController {
             @RequestBody PreSignedUrlDto.Request request) {
        return  ResponseEntity.ok()
                .body(minioService.getDownloadUrl(userDetail.getUserSeq(), request));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteFile(
+            @AuthenticationPrincipal AuthedUserDetail userDetail,
+            @RequestBody PreSignedUrlDto.Request request
+    ) {
+        fileService.deleteFile(userDetail.getUserSeq(), request);
+        minioService.deleteFile(userDetail.getUserSeq(), request);
+        return ResponseEntity.noContent().build();
     }
 }
