@@ -11,7 +11,7 @@ public class PreSignedUrlDto {
     @NoArgsConstructor
     public static class Request {
         private String fileName;
-        private Long fileId;
+        private String fileId;
         private String storageKey;
     }
 

@@ -77,6 +77,6 @@ public class FileService {
     }
 
     public void deleteFile(Long userSeq, PreSignedUrlDto.Request request) {
-        fileRepository.deleteByUser_userSeqAndFileSeq(userSeq, request.getFileId());
+        fileRepository.deleteByUser_userSeqAndFileSeq(userSeq, Long.parseLong(request.getFileId()));
     }
 }
