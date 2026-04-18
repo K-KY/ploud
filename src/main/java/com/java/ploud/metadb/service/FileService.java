@@ -7,7 +7,7 @@ import com.java.ploud.metadb.service.dto.MetaDataDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
 import com.java.ploud.metadb.service.repository.FileRepository;
-import com.java.ploud.storage.service.dto.PreSignedUrlDto;
+import com.java.ploud.storage.service.dto.FileDeleteDto;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,7 +76,7 @@ public class FileService {
         return directoryService.createRoot(userSeq);
     }
 
-    public void deleteFile(Long userSeq, PreSignedUrlDto.Request request) {
+    public void deleteFile(Long userSeq, FileDeleteDto request) {
         fileRepository.deleteByUser_userSeqAndFileSeq(userSeq, Long.parseLong(request.getFileId()));
     }
 }

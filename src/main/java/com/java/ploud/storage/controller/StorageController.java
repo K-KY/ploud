@@ -2,6 +2,7 @@ package com.java.ploud.storage.controller;
 
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.FileService;
+import com.java.ploud.storage.service.dto.FileDeleteDto;
 import com.java.ploud.storage.service.dto.FileUploadDto;
 import com.java.ploud.storage.service.MinioService;
 import com.java.ploud.storage.service.dto.PreSignedUrlDto;
@@ -38,7 +39,7 @@ public class StorageController {
     @DeleteMapping
     public ResponseEntity<Void> deleteFile(
             @AuthenticationPrincipal AuthedUserDetail userDetail,
-            @RequestBody PreSignedUrlDto.Request request
+            @RequestBody FileDeleteDto request
     ) {
         fileService.deleteFile(userDetail.getUserSeq(), request);
         minioService.deleteFile(userDetail.getUserSeq(), request);

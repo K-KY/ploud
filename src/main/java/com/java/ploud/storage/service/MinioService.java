@@ -1,5 +1,6 @@
 package com.java.ploud.storage.service;
 
+import com.java.ploud.storage.service.dto.FileDeleteDto;
 import com.java.ploud.storage.service.dto.PreSignedUrlDto;
 import io.minio.*;
 import io.minio.errors.*;
@@ -149,7 +150,7 @@ public class MinioService {
         }
     }
 
-    public void deleteFile(Long userSeq, PreSignedUrlDto.Request dto) {
+    public void deleteFile(Long userSeq, FileDeleteDto dto) {
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
