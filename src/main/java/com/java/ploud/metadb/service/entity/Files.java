@@ -41,6 +41,8 @@ public class Files {
     @ManyToOne(fetch = FetchType.EAGER)
     private Directory parent;
 
+    private boolean deleted;
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
