@@ -3,6 +3,8 @@ package com.java.ploud.metadb.service.entity;
 import com.java.ploud.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -37,6 +39,7 @@ public class Directory {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_dir_seq")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Directory parent;
 
     private boolean deleted;
