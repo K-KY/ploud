@@ -39,6 +39,8 @@ public class Directory {
     @JoinColumn(name = "parent_dir_seq")
     private Directory parent;
 
+    private boolean deleted;
+
     @CreatedDate
     private LocalDateTime created;
 
