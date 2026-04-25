@@ -1,10 +1,13 @@
 package com.java.ploud.metadb.service;
 
 import com.java.ploud.auth.entity.User;
+import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.entity.Directory;
+import com.java.ploud.metadb.service.queue.DelProducer;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,7 @@ public class DirectoryService {
     private static final String ROOT = "";
     private final DirectoryRepository directoryRepository;
     private final DirectoryTransactionService directoryTransactionService;
+    private final DelProducer delProducer;
 
     /**
      * 외부에서 호출하는 메서드: multipart 파일의 originalFilename을 받아
@@ -125,5 +129,9 @@ public class DirectoryService {
 
     public Directory findDir(Long userSeq, Long dirSeq) {
         return directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, dirSeq);
+    }
+
+    public void deleteDir(Long userSeq, DirDto.Request request) {
+        delProducer.send(request.getParentSeq());
     }
 }
