@@ -26,9 +26,9 @@ public class DelConsumer {
             // 스트림 이름, 필드 key, 필드 value
             List<MapRecord<String, Object, Object>> messages =
                     redisTemplate.opsForStream().read(
-                            Consumer.from("order-group", "consumer-1"),
+                            Consumer.from("del-group", "consumer-1"),
                             StreamReadOptions.empty().count(1).block(Duration.ofSeconds(5)),
-                            StreamOffset.create("order-stream", ReadOffset.lastConsumed())
+                            StreamOffset.create("del-stream", ReadOffset.lastConsumed())
                     );
 
             if (messages == null) continue;
@@ -42,7 +42,7 @@ public class DelConsumer {
 
                     //
                     redisTemplate.opsForStream()
-                            .acknowledge("order-stream", "order-group", msg.getId());
+                            .acknowledge("del-stream", "del-group", msg.getId());
 
                 } catch (Exception e) {
                     //
@@ -54,7 +54,7 @@ public class DelConsumer {
 
     private void process(MapRecord<String, Object, Object> msg) {
         System.out.println("msg = " + msg);
-        System.out.println("msg.getValue().get(\"orderId\") = " + msg.getValue().get("orderId"));
+        System.out.println("msg.getValue().get(\"dirSeq\") = " + msg.getValue().get("dirSeq"));
         System.out.println("msg.getValue().get(\"status\") = " + msg.getValue().get("status"));
     }
 }
