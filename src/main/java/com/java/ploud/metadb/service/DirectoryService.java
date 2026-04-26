@@ -7,7 +7,6 @@ import com.java.ploud.metadb.service.queue.DelProducer;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.sql.Delete;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +20,7 @@ public class DirectoryService {
     private static final String ROOT = "";
     private final DirectoryRepository directoryRepository;
     private final DirectoryTransactionService directoryTransactionService;
+    private final DeleteDirQueueService dirQueueService;
     private final DelProducer delProducer;
 
     /**
@@ -131,7 +131,13 @@ public class DirectoryService {
         return directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, dirSeq);
     }
 
-    public void deleteDir(Long userSeq, DirDto.Request request) {
+    public void deleteDirSoft(Long userSeq, DirDto.Request request) {
+        //큐 백업 데이터 저장
+        dirQueueService.save(userSeq, request.getParentSeq());
+        //메세지 발행
         delProducer.send(request.getParentSeq());
+        //현재 디렉토리 삭제
+        Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
+        dir.delete();
     }
 }
