@@ -53,4 +53,8 @@ public class Directory {
         }
         return parent.getDirSeq();
     }
+
+    public void delete() {
+        deleted = true;
+    }
 }
