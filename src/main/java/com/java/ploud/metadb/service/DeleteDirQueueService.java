@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.service;
 
 import com.java.ploud.metadb.service.entity.DeleteDirQueue;
+import com.java.ploud.metadb.service.queue.DelProducer;
 import com.java.ploud.metadb.service.repository.DeleteDirQueueRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeleteDirQueueService {
     private final DeleteDirQueueRepository deleteDirQueueRepository;
+    private final DelProducer delProducer;
 
     @Transactional
     public void save(Long userSeq, Long dirSeq) {
@@ -22,5 +24,6 @@ public class DeleteDirQueueService {
                 .executed(false)
                 .build();
         deleteDirQueueRepository.save(delQueue);
+        delProducer.send(delQueue);
     }
 }
