@@ -12,13 +12,14 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DeleteDirQueueService {
+    private static final String DEL_DIR_PREFIX = "DEL_DIR:";
     private final DeleteDirQueueRepository deleteDirQueueRepository;
     private final DelProducer delProducer;
 
     @Transactional
     public void save(Long userSeq, Long dirSeq) {
         DeleteDirQueue delQueue = DeleteDirQueue.builder()
-                .queueId(UUID.randomUUID().toString())
+                .queueId(DEL_DIR_PREFIX + UUID.randomUUID())
                 .userSeq(userSeq)
                 .dirSeq(dirSeq)
                 .executed(false)
