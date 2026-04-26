@@ -135,9 +135,8 @@ public class DirectoryService {
         //큐 백업 데이터 저장
         dirQueueService.save(userSeq, request.getParentSeq());
         //메세지 발행
-        delProducer.send(request.getParentSeq());
         //현재 디렉토리 삭제
-        Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
-        dir.delete();
+//        Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
+//        dir.delete();
     }
 }
