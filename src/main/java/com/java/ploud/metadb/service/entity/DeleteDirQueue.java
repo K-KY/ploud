@@ -33,4 +33,8 @@ public class DeleteDirQueue {
 
     @LastModifiedDate
     private LocalDateTime modifiedTime;
+
+    public void execute() {
+        executed = true;
+    }
 }
