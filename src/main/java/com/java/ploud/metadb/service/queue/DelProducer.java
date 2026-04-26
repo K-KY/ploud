@@ -20,7 +20,7 @@ public class DelProducer {
         Map<String, Object> data = new HashMap<>();
         data.put("dir", delQueue.getDirSeq().toString());
         data.put("user", delQueue.getUserSeq().toString());
-        data.put("queueIid", delQueue.getQueueId());
+        data.put("queueId", delQueue.getQueueId());
 
         redisTemplate.opsForStream().add("del-stream", data);
     }
