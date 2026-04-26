@@ -1,9 +1,7 @@
 package com.java.ploud.metadb.service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.java.ploud.auth.entity.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +21,10 @@ public class DeleteDirQueue {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Directory directory;
+
+    @ManyToOne
+    @JoinColumn(name = "user_user_seq")
+    private User user;
 
     private boolean executed;
 
