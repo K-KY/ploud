@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -29,6 +28,12 @@ public class DeleteDirQueueService {
                 .executed(false)
                 .build();
         deleteDirQueueRepository.save(delQueue);
-        delProducer.send(delQueue);
+        applicationEventPublisher.publishEvent(delQueue);
+    }
+
+    @Transactional
+    public void execute(String queueId) {
+        log.info("execute dir queue {}", queueId);
+        deleteDirQueueRepository.findById(queueId).ifPresent(DeleteDirQueue::execute);
     }
 }
