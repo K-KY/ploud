@@ -131,6 +131,7 @@ public class DirectoryService {
         return directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, dirSeq);
     }
 
+    @Transactional
     public void deleteDirSoft(Long userSeq, DirDto.Request request) {
         //큐 백업 데이터 저장
         dirQueueService.save(userSeq, request.getParentSeq());
