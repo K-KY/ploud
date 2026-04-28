@@ -120,6 +120,7 @@ public class DirectoryService {
     }
 
     public List<Directory> findChildDir(Long userSeq, Long parentSeq) {
+        log.info("findChildDir({}, {})", userSeq, parentSeq);
         if (parentSeq == null) {
             Directory root = findRoot(userSeq);
             return findChildDir(userSeq, root.getDirSeq());
