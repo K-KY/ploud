@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -23,19 +22,22 @@ public class DelConsumer {
     private final DeleteDirQueueService dirQueueService;
 
 
-    @Scheduled(fixedDelay = 500)
+    @Scheduled(fixedDelay = 2000)
     public void consume() {
-        log.info("scheduler running");
         // 스트림 이름, 필드 key, 필드 value
         List<MapRecord<String, Object, Object>> messages =
                 redisTemplate.opsForStream().read(
                         Consumer.from("del-group", "consumer-1"),
-                        StreamReadOptions.empty().count(1).block(Duration.ofSeconds(5)),
+                        StreamReadOptions.empty().count(500),
                         StreamOffset.create("del-stream", ReadOffset.lastConsumed())
                 );
 
-            if (messages == null) return;
+        if (messages == null || messages.isEmpty()) {
+            //메세지 없을 때 처리 안된 메세지 있는지 확인
+            return;
+        }
 
+        log.info("scheduler running");
         for (MapRecord<String, Object, Object> msg : messages) {
             try {
                 log.info("consume msg {}", msg.getValue());
@@ -59,8 +61,10 @@ public class DelConsumer {
         String userSeq = msg.getValue().get("user").toString();
         String dirSeq = msg.getValue().get("dir").toString();
 
+        //큐에 들어온 데이터 삭제 수행
         dirQueueService.execute(msg.getValue().get("queueId").toString());
 
+        //삭제된 데이터 하위 항목 조회
         List<Directory> childDir = directoryService.findChildDir(Long.parseLong(userSeq), Long.parseLong(dirSeq));
         System.out.println("childDir = " + childDir);
         log.info("childDir = {}, size = {}", childDir, childDir.size());
