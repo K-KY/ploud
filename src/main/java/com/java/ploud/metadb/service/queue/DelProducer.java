@@ -15,7 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class DelProducer {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     // 트랜잭션 이벤트 리스너
     //파라미터 타입의 이벤트가 발행되면 실행됨
