@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DeleteDirQueueRepository extends JpaRepository<DeleteQueue, String> {
+public interface DeleteQueueRepository extends JpaRepository<DeleteQueue, String> {
 }
