@@ -25,7 +25,8 @@ public class DeleteDirQueueService {
         DeleteQueue delQueue = DeleteQueue.builder()
                 .queueId(DEL_DIR_PREFIX + UUID.randomUUID())
                 .userSeq(userSeq)
-                .dirSeq(dirSeq)
+                .targetSeq(dirSeq)
+                .type(TargetTypes.DIR)
                 .executed(false)
                 .build();
         deleteDirQueueRepository.save(delQueue);

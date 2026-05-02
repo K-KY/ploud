@@ -23,7 +23,8 @@ public class DelProducer {
     public void send(DeleteQueue delQueue) {
         log.info("accepted dirSeq={}", delQueue.getTargetSeq());
         Map<String, Object> data = new HashMap<>();
-        data.put("dir", delQueue.getDirSeq().toString());
+        data.put("target", delQueue.getTargetSeq().toString());
+        data.put("type", delQueue.getType().getType());
         data.put("user", delQueue.getUserSeq().toString());
         data.put("queueId", delQueue.getQueueId());
 
