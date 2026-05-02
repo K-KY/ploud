@@ -2,7 +2,7 @@ package com.java.ploud.metadb.service;
 
 import com.java.ploud.metadb.service.entity.DeleteQueue;
 import com.java.ploud.metadb.service.entity.TargetTypes;
-import com.java.ploud.metadb.service.repository.DeleteDirQueueRepository;
+import com.java.ploud.metadb.service.repository.DeleteQueueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,9 +14,9 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DeleteDirQueueService {
+public class DeleteQueueService {
     private static final String DEL_DIR_PREFIX = "DEL_DIR:";
-    private final DeleteDirQueueRepository deleteDirQueueRepository;
+    private final DeleteQueueRepository deleteQueueRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
@@ -36,6 +36,6 @@ public class DeleteDirQueueService {
     @Transactional
     public void execute(String queueId) {
         log.info("execute dir queue {}", queueId);
-        deleteDirQueueRepository.findById(queueId).ifPresent(DeleteQueue::execute);
+        deleteQueueRepository.findById(queueId).ifPresent(DeleteQueue::execute);
     }
 }
