@@ -1,9 +1,5 @@
 package com.java.ploud.metadb.service.queue;
 
-import com.java.ploud.metadb.service.DeleteDirQueueService;
-import com.java.ploud.metadb.service.DirectoryService;
-import com.java.ploud.metadb.service.dto.DirDto;
-import com.java.ploud.metadb.service.entity.Directory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.*;
@@ -18,9 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DelConsumer {
     private final RedisTemplate<String, Object> redisTemplate;
-    private final DirectoryService directoryService;
-    private final DeleteDirQueueService dirQueueService;
-
+    private final QueueHandleManager queueHandleManager;
 
     @Scheduled(fixedDelay = 2000)
     public void consume() {
@@ -42,10 +36,10 @@ public class DelConsumer {
             try {
                 log.info("consume msg {}", msg.getValue());
 
-                //
+                //메세지 처리
                 process(msg);
 
-                //
+                //처리 완료된 메세지 확인 (삭제 아님)
                 redisTemplate.opsForStream()
                         .acknowledge("del-stream", "del-group", msg.getId());
 
@@ -57,20 +51,21 @@ public class DelConsumer {
     }
 
 
-    private void process(MapRecord<String, Object, Object> msg) {
-        String userSeq = msg.getValue().get("user").toString();
-        String dirSeq = msg.getValue().get("dir").toString();
-
-        //큐에 들어온 데이터 삭제 수행
-        dirQueueService.execute(msg.getValue().get("queueId").toString());
-
-        //삭제된 데이터 하위 항목 조회
-        List<Directory> childDir = directoryService.findChildDir(Long.parseLong(userSeq), Long.parseLong(dirSeq));
-        System.out.println("childDir = " + childDir);
-        log.info("childDir = {}, size = {}", childDir, childDir.size());
-
-        childDir.forEach(child -> {
-            directoryService.deleteDirSoft(Long.parseLong(userSeq), new DirDto.Request(child.getDirSeq()));
-        });
+    private void process(MapRecord<String, Object, Object> msg)  {
+        queueHandleManager.handle(msg);
+//        String userSeq = msg.getValue().get("user").toString();
+//        String targetSeq = msg.getValue().get("target").toString();
+//        String type = msg.getValue().get("type").toString();
+//
+//        //큐에 들어온 데이터 삭제 수행
+//        dirQueueService.execute(msg.getValue().get("queueId").toString());
+//
+//        //삭제된 데이터 하위 항목 조회
+//        List<Directory> childDir = directoryService.findChildDir(Long.parseLong(userSeq), Long.parseLong(targetSeq));
+//        log.info("childDir = {}, size = {}", childDir, childDir.size());
+//
+//        childDir.forEach(child -> {
+//            directoryService.inDeleteQueue(Long.parseLong(userSeq), child.getDirSeq());
+//        });
     }
 }
