@@ -142,4 +142,9 @@ public class DirectoryService {
         Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
         dir.delete();
     }
+
+    @Transactional
+    public void inDeleteQueue(Long userSeq, Long dirSeq) {
+        dirQueueService.save(userSeq, dirSeq);
+    }
 }
