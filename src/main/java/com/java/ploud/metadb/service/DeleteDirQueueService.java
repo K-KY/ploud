@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.service;
 
-import com.java.ploud.metadb.service.entity.DeleteDirQueue;
+import com.java.ploud.metadb.service.entity.DeleteQueue;
+import com.java.ploud.metadb.service.entity.TargetTypes;
 import com.java.ploud.metadb.service.repository.DeleteDirQueueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class DeleteDirQueueService {
 
     @Transactional
     public void save(Long userSeq, Long dirSeq) {
-        log.info("queue saved by {}, dir {}", userSeq, dirSeq);
-        DeleteDirQueue delQueue = DeleteDirQueue.builder()
+        log.info("queue saved by user {}, dir {}", userSeq, dirSeq);
+        DeleteQueue delQueue = DeleteQueue.builder()
                 .queueId(DEL_DIR_PREFIX + UUID.randomUUID())
                 .userSeq(userSeq)
                 .dirSeq(dirSeq)
@@ -34,6 +35,6 @@ public class DeleteDirQueueService {
     @Transactional
     public void execute(String queueId) {
         log.info("execute dir queue {}", queueId);
-        deleteDirQueueRepository.findById(queueId).ifPresent(DeleteDirQueue::execute);
+        deleteDirQueueRepository.findById(queueId).ifPresent(DeleteQueue::execute);
     }
 }
