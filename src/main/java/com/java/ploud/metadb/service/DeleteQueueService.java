@@ -20,16 +20,16 @@ public class DeleteQueueService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public void save(Long userSeq, Long dirSeq) {
+    public void save(Long userSeq, Long dirSeq, TargetTypes type) {
         log.info("queue saved by user {}, dir {}", userSeq, dirSeq);
         DeleteQueue delQueue = DeleteQueue.builder()
                 .queueId(DEL_DIR_PREFIX + UUID.randomUUID())
                 .userSeq(userSeq)
                 .targetSeq(dirSeq)
-                .type(TargetTypes.DIR)
+                .type(type)
                 .executed(false)
                 .build();
-        deleteDirQueueRepository.save(delQueue);
+        deleteQueueRepository.save(delQueue);
         applicationEventPublisher.publishEvent(delQueue);
     }
 

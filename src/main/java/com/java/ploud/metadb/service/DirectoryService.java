@@ -135,7 +135,7 @@ public class DirectoryService {
     public void deleteDirSoft(Long userSeq, DirDto.Request request) {
         //큐 백업 데이터 저장
         //메세지 발행
-        dirQueueService.save(userSeq, request.getParentSeq());
+        deleteQueueService.save(userSeq, request.getParentSeq(), TargetTypes.DIR);
 
         //현재 디렉토리 삭제
         Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
@@ -144,6 +144,6 @@ public class DirectoryService {
 
     @Transactional
     public void inDeleteQueue(Long userSeq, Long dirSeq) {
-        dirQueueService.save(userSeq, dirSeq);
+        deleteQueueService.save(userSeq, dirSeq, TargetTypes.DIR);
     }
 }
