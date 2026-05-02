@@ -17,14 +17,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Builder
-public class DeleteDirQueue {
+public class DeleteQueue {
 
     @Id
     private String queueId;
 
-    private Long dirSeq;
+    private Long targetSeq;
 
     private Long userSeq;
+
+    @Enumerated(EnumType.STRING)
+    private TargetTypes type;
 
     private boolean executed;
 
