@@ -77,6 +77,7 @@ public class FileService {
         fileRepository.deleteByUser_userSeqAndFileSeq(userSeq, request.getFileId());
     }
 
+    @Transactional
     public void deleteFileSoft(Long userSeq, Long fileSeq) {
         //현재 파일 삭제
         Files file = fileRepository.findByUser_UserSeqAndFileSeq(userSeq, fileSeq);
