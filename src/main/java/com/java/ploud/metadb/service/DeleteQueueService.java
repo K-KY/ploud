@@ -20,7 +20,7 @@ public class DeleteQueueService {
 
     @Transactional
     public void save(Long userSeq, Long targetSeq, TargetTypes type) {
-        log.info("queue saved by user {}, dir {}", userSeq, targetSeq);
+        log.info("queue saved by user {}, dir {}, type {}", userSeq, targetSeq, type);
         DeleteQueue delQueue = DeleteQueue.builder()
                 .queueId(type.getPrefix() + UUID.randomUUID())
                 .userSeq(userSeq)
