@@ -22,6 +22,7 @@ public class FileQueueHandler implements QueueHandler {
 
     @Override
     public void handle(QueueMessage msg) {
-        log.info("dir queue received: {}", msg.queueId());
+        log.info("file queue received: {}", msg.queueId());
+        fileService.deleteFileSoft(msg.userSeq(), msg.targetSeq());
     }
 }
