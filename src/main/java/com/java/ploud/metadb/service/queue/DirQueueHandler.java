@@ -21,7 +21,7 @@ public class DirQueueHandler implements QueueHandler {
 
     @Override
     public String getType() {
-        return TargetTypes.DIR.getType();
+        return TargetTypes.DEL_DIR.getType();
     }
 
     @Override
