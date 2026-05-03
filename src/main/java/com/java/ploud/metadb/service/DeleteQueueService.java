@@ -15,17 +15,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class DeleteQueueService {
-    private static final String DEL_DIR_PREFIX = "DEL_DIR:";
     private final DeleteQueueRepository deleteQueueRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public void save(Long userSeq, Long dirSeq, TargetTypes type) {
-        log.info("queue saved by user {}, dir {}", userSeq, dirSeq);
+    public void save(Long userSeq, Long targetSeq, TargetTypes type) {
+        log.info("queue saved by user {}, dir {}", userSeq, targetSeq);
         DeleteQueue delQueue = DeleteQueue.builder()
-                .queueId(DEL_DIR_PREFIX + UUID.randomUUID())
+                .queueId(type.getPrefix() + UUID.randomUUID())
                 .userSeq(userSeq)
-                .targetSeq(dirSeq)
+                .targetSeq(targetSeq)
                 .type(type)
                 .executed(false)
                 .build();
