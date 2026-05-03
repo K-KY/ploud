@@ -17,7 +17,7 @@ public class FileQueueHandler implements QueueHandler {
 
     @Override
     public String getType() {
-        return TargetTypes.FILE.getType();
+        return TargetTypes.DEL_FILE.getType();
     }
 
     @Override
