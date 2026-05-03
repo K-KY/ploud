@@ -11,4 +11,8 @@ public class FileDeleteDto {
     private String fileName;
     private String fileId;
     private String storageKey;
+
+    public Long getFileId() {
+        return Long.parseLong(fileId);
+    }
 }
