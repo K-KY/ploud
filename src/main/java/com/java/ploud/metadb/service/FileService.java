@@ -6,9 +6,11 @@ import com.java.ploud.auth.service.UserService;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
+import com.java.ploud.metadb.service.entity.TargetTypes;
 import com.java.ploud.metadb.service.repository.FileRepository;
 import com.java.ploud.storage.service.dto.FileDeleteDto;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +19,12 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FileService {
     private final FileRepository fileRepository;
     private final DirectoryService directoryService;
     private final UserService userService;
-
-    public FileService(FileRepository fileRepository, DirectoryService directoryService, UserService userService) {
-        this.fileRepository = fileRepository;
-        this.directoryService = directoryService;
-        this.userService = userService;
-    }
-
+    private final DeleteQueueService deleteQueueService;
 
     /**
      * @param userDetail
@@ -78,5 +75,15 @@ public class FileService {
 
     public void deleteFile(Long userSeq, FileDeleteDto request) {
         fileRepository.deleteByUser_userSeqAndFileSeq(userSeq, request.getFileId());
+    }
+
+    public void deleteFileSoft(Long userSeq, Long fileSeq) {
+        //현재 파일 삭제
+        Files file = fileRepository.findByUser_UserSeqAndFileSeq(userSeq, fileSeq);
+        file.delete();
+    }
+
+    public void inDeleteQueue(Long userSeq, Long fileSeq) {
+        deleteQueueService.save(userSeq, fileSeq, TargetTypes.DEL_FILE);
     }
 }
