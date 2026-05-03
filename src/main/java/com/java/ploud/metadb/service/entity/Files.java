@@ -49,4 +49,8 @@ public class Files {
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public void delete() {
+        deleted = true;
+    }
 }
