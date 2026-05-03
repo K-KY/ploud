@@ -133,10 +133,6 @@ public class DirectoryService {
 
     @Transactional
     public void deleteDirSoft(Long userSeq, DirDto.Request request) {
-        //큐 백업 데이터 저장
-        //메세지 발행
-        deleteQueueService.save(userSeq, request.getParentSeq(), TargetTypes.DEL_DIR);
-
         //현재 디렉토리 삭제
         Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
         dir.delete();

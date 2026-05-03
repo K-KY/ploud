@@ -16,7 +16,7 @@ public class DelConsumer {
     private final RedisTemplate<String, Object> redisTemplate;
     private final QueueHandleManager queueHandleManager;
 
-    @Scheduled(fixedDelay = 2000)
+    @Scheduled(fixedDelay = 1000)
     public void consume() {
         // 스트림 이름, 필드 key, 필드 value
         List<MapRecord<String, Object, Object>> messages =
