@@ -48,7 +48,9 @@ public class DirController {
 
     @DeleteMapping
     public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
+        //디렉토리 삭제
         directoryService.deleteDirSoft(userDetail.getUserSeq(), request);
+        //하위 디렉토리 큐 등록
         directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getParentSeq());
     }
 }
