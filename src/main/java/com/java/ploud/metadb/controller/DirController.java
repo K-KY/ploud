@@ -45,4 +45,10 @@ public class DirController {
                 .parentSeq(parentDir.getParentSeq())
                 .build();
     }
+
+    @DeleteMapping
+    public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
+        directoryService.deleteDirSoft(userDetail.getUserSeq(), request);
+        directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getParentSeq());
+    }
 }
