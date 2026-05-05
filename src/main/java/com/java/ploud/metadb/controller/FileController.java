@@ -48,4 +48,9 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(fileService.createRoot(userDetail.getUserSeq()));
     }
+
+    @DeleteMapping
+    public void deleteFile(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileDto.Request request) {
+        fileService.deleteFileSoft(userDetail.getUserSeq(), request.getParentSeq());
+    }
 }
