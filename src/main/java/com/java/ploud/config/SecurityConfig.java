@@ -36,7 +36,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173"};
-    private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
+    private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"};
     private static final String[] WHITELIST_URI = {"/login","/logout", "/signup", "/refresh"};
 
     public SecurityConfig(UserService userService, JwtService jwtService, JwtProvider jwtProvider,
