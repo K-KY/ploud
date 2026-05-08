@@ -17,4 +17,5 @@ public class AppConfig {
     public QueueHandleManager queueHandleManager(DeleteQueueService deleteDirQueueService,
                                                  List<QueueHandler> handlers) {
         return new QueueHandleManager(deleteDirQueueService, handlers);
-    }}
+    }
+}
