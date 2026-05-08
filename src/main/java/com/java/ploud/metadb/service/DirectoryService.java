@@ -134,7 +134,7 @@ public class DirectoryService {
     @Transactional
     public void deleteDirSoft(Long userSeq, DirDto.Request request) {
         //현재 디렉토리 삭제
-        Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getParentSeq());
+        Directory dir = directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, request.getDirSeq());
         dir.delete();
     }
 

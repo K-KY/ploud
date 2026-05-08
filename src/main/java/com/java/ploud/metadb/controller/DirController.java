@@ -25,7 +25,7 @@ public class DirController {
      */
     @PostMapping
     public List<DirDto.Response> getDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
-        return directoryService.findChildDir(userDetail.getUserSeq(), request.getParentSeq())
+        return directoryService.findChildDir(userDetail.getUserSeq(), request.getDirSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
                         .dirSeq(d.getDirSeq())
@@ -37,7 +37,7 @@ public class DirController {
     @PostMapping("current")
     public DirDto.Response getCurrent(@AuthenticationPrincipal AuthedUserDetail userDetail,@RequestBody DirDto.Request request) {
 
-        Directory parentDir = directoryService.findDir(userDetail.getUserSeq(), request.getParentSeq());
+        Directory parentDir = directoryService.findDir(userDetail.getUserSeq(), request.getDirSeq());
 
         return DirDto.Response.builder()
                 .dirSeq(parentDir.getDirSeq())
@@ -46,11 +46,11 @@ public class DirController {
                 .build();
     }
 
-    @DeleteMapping
+    @PatchMapping
     public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
         //디렉토리 삭제
         directoryService.deleteDirSoft(userDetail.getUserSeq(), request);
         //하위 디렉토리 큐 등록
-        directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getParentSeq());
+        directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getDirSeq());
     }
 }

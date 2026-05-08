@@ -8,10 +8,10 @@ public class DirDto {
     @Getter
     @Builder
     public static class Request {
-        private Long parentSeq;
+        private Long dirSeq;
 
-        public Request(Long parentSeq) {
-            this.parentSeq = parentSeq;
+        public Request(Long dirSeq) {
+            this.dirSeq = dirSeq;
         }
 
         public Request() {
