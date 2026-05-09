@@ -40,7 +40,7 @@ public class FileController {
     public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                        @RequestBody FileDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.readFiles(userDetail.getUserSeq(), request.getParentSeq()));
+                .body(fileService.readFiles(userDetail.getUserSeq(), request.getDirSeq()));
     }
 
     @PostMapping("/newroot")
@@ -51,6 +51,6 @@ public class FileController {
 
     @DeleteMapping
     public void deleteFile(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileDto.Request request) {
-        fileService.deleteFileSoft(userDetail.getUserSeq(), request.getParentSeq());
+        fileService.deleteFileSoft(userDetail.getUserSeq(), request.getDirSeq());
     }
 }
