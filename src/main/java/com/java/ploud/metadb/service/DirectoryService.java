@@ -124,7 +124,7 @@ public class DirectoryService {
             Directory root = findRoot(userSeq);
             return findChildDir(userSeq, root.getDirSeq());
         }
-        return directoryRepository.findByUser_UserSeqAndParentDirSeq(userSeq, parentSeq);
+        return directoryRepository.findByUser_UserSeqAndParentDirSeqAndDeletedFalse(userSeq, parentSeq);
     }
 
     public Directory findDir(Long userSeq, Long dirSeq) {
