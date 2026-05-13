@@ -32,6 +32,8 @@ public class Files {
 
     private String title;
 
+    private String eTag;
+
     @Column(name = "original_filename")
     private String originalFilename;
 
