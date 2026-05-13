@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
@@ -15,5 +16,7 @@ public class MetaDataDto {
     private String location; //앱 상에서 사용자가 보고있는 경로 //app/user/dir/file
     private String contentType;
     private String storageKey;
+    @NotNull
+    private String eTag;
     private Long size;
 }
