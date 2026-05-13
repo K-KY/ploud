@@ -36,22 +36,48 @@ public class FileService {
     public Files upload(AuthedUserDetail userDetail, MetaDataDto metaDataDto) {
         //이거를 특정 구분자로 나누고 나눠진 문자열로 dir테이블에 저장
         //소유자에게 이미 해당하는 경로가 있으면 제외
+        //metaDataDto.getETag(); --> 해당 데이터로 완전히 같은 파일 중복 확인
+        Files file = buildFile(userDetail, metaDataDto);
+        fileRepository.save(file);
+        return file;
+    }
+
+    public Files buildFile(AuthedUserDetail userDetail, MetaDataDto metaDataDto) {
         String originalFilename = metaDataDto.getOriginalFilename();
-        String location = metaDataDto.getLocation();
         User user = userService.findByUserSeq(userDetail.getUserSeq());
 
-        Files entity = Files.builder()
+        //중복되는 파일 찾기
+        Files duplicate = findDuplicate(user.getUserSeq(), metaDataDto.getETag());
+        String storageKey = metaDataDto.getStorageKey(); // 기본값으로 초기화
+        if (duplicate != null) {// 조회한 중복 데이터가 null이 아니면 조회된 값의 storage key 사용
+            storageKey = duplicate.getStorageKey();
+            //todo 스토리지 삭제 큐에 등록 기능
+            log.info("Duplicate storage key: {}", storageKey);
+            log.info("enqueue duplicate storage key: {}", metaDataDto.getStorageKey());
+        }
+
+
+        return Files.builder()
                 .user(user)
                 .title(Paths.get(originalFilename).getFileName().toString())
-                .storageKey(metaDataDto.getStorageKey())
+                .storageKey(storageKey)
                 .originalFilename(originalFilename)
                 .size(metaDataDto.getSize())
                 .contentType(metaDataDto.getContentType())
-                .parent(getLastParent(user.getUserSeq(), location + originalFilename))
+                .parent(getLastParent(user.getUserSeq(), metaDataDto.getLocation() + originalFilename))
+                .eTag(metaDataDto.getETag())
                 //todo 존재하는 데이터를 다시 확인중임 프론트에서 현재 경로 pk를 같이 받아서 없는 경로부터 확인하도록 최적화
                 .build();
 
-        return fileRepository.save(entity);
+    }
+
+    private Files findDuplicate(Long userSeq, String eTag) {
+        List<Files> duplicates = fileRepository.findByUser_UserSeqAndETag(userSeq, eTag);
+        log.info("found duplicates: {}", duplicates.size());
+        if (duplicates.isEmpty()) {
+            return null;
+        }
+        return duplicates.getFirst();
     }
 
     private Directory getLastParent(Long userSeq, String originalFilename) {
