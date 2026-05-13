@@ -13,4 +13,6 @@ public interface FileRepository extends JpaRepository<Files, Long> {
     void deleteByUser_userSeqAndFileSeq(Long userUserSeq, Long fileSeq);
 
     Files findByUser_UserSeqAndFileSeq(Long userUserSeq, Long fileSeq);
+
+    List<Files> findByUser_UserSeqAndETag(Long userUserSeq, String eTag);
 }
