@@ -67,6 +67,7 @@ public class MinioService {
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
     private String makeStorageName(Long userSeq, String location) {
+        log.info("makeStorageName: userSeq={}, location={}", userSeq, location);
         StringJoiner stringJoiner = new StringJoiner("/", "", "");
         stringJoiner.add(String.valueOf(userSeq));
         if (location != null) {
@@ -90,6 +91,7 @@ public class MinioService {
     }
 
     public Map<String, String> getPreSignedUrl(Long userSeq, String fileName) {
+        //동일한 파일 이름이 존재한다면 uuid를 붙여 업로드
         if (checkExists(makeStorageName(userSeq, fileName))) {
             int extensionStart = fileName.lastIndexOf('.');
             String name = fileName.substring(0, extensionStart - 1);
@@ -100,6 +102,7 @@ public class MinioService {
 
         try {
             String name = makeStorageName(userSeq, fileName);
+            log.info("Try get Pre-signed URL: {}", name);
             String presignedObjectUrl = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .bucket(bucket)
