@@ -17,11 +17,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class StorageClean {
+public class StorageCleanQueue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cleanSeq;
     private String storageKey;
+    private Long userSeq;
+    private TargetTypes type;
     private boolean executed;
 
     @CreatedDate
