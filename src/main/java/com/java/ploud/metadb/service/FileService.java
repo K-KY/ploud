@@ -25,6 +25,7 @@ public class FileService {
     private final DirectoryService directoryService;
     private final UserService userService;
     private final DeleteQueueService deleteQueueService;
+    private final StorageCleanService storageCleanService;
 
     /**
      * @param userDetail
@@ -50,10 +51,10 @@ public class FileService {
         Files duplicate = findDuplicate(user.getUserSeq(), metaDataDto.getETag());
         String storageKey = metaDataDto.getStorageKey(); // 기본값으로 초기화
         if (duplicate != null) {// 조회한 중복 데이터가 null이 아니면 조회된 값의 storage key 사용
-            storageKey = duplicate.getStorageKey();
-            //todo 스토리지 삭제 큐에 등록 기능
             log.info("Duplicate storage key: {}", storageKey);
             log.info("enqueue duplicate storage key: {}", metaDataDto.getStorageKey());
+            storageCleanService.save(user.getUserSeq(), storageKey);//큐 등록
+            storageKey = duplicate.getStorageKey();//이미 존재하는 경로 사용
         }
 
 
