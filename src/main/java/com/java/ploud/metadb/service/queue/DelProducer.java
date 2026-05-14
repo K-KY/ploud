@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.service.queue;
 
 import com.java.ploud.metadb.service.entity.DeleteQueue;
+import com.java.ploud.metadb.service.entity.StorageCleanQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +29,17 @@ public class DelProducer {
         data.put("user", delQueue.getUserSeq().toString());
         data.put("queueId", delQueue.getQueueId());
 
+        redisTemplate.opsForStream().add("del-stream", data);
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void send(StorageCleanQueue storageClean) {
+        log.info("accepted storageKey={}", storageClean.getStorageKey());
+        Map<String, Object> data = new HashMap<>();
+        data.put("target", storageClean.getCleanSeq().toString());
+        data.put("type", storageClean.getType().getType());
+        data.put("user", storageClean.getUserSeq().toString());
+        data.put("queueId", storageClean.getCleanSeq().toString());
         redisTemplate.opsForStream().add("del-stream", data);
     }
 }
