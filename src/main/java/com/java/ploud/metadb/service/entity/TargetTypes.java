@@ -1,7 +1,7 @@
 package com.java.ploud.metadb.service.entity;
 
 public enum TargetTypes {
-    DEL_DIR("DIR", "DEL_DIR:"), DEL_FILE("FILE", "DEL_FILE:")
+    DEL_DIR("DIR", "DEL_DIR:"), DEL_FILE("FILE", "DEL_FILE:"), DEL_STORAGE("STORAGE", "DEL_STORAGE:"),
     ;
     private final String type;
     private final String prefix;
