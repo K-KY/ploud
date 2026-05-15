@@ -17,6 +17,6 @@ public class MetaDataDto {
     private String contentType;
     private String storageKey;
     @NotNull
-    private String eTag;
+    private String fileHash;
     private Long size;
 }
