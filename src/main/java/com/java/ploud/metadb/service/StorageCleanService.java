@@ -28,7 +28,7 @@ public class StorageCleanService {
     }
 
     @Transactional
-    public StorageCleanQueue get(Long userSeq, Long targetSeq) {
+    public StorageCleanQueue getAndExecute(Long userSeq, Long targetSeq) {
         Optional<StorageCleanQueue> storageCleanQueue = storageCleanRepository.findByCleanSeqAndUserSeq(targetSeq, userSeq);
         if (storageCleanQueue.isPresent()) {
             StorageCleanQueue storageData = storageCleanQueue.get();
