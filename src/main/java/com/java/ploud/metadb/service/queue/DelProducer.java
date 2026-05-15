@@ -32,6 +32,8 @@ public class DelProducer {
         redisTemplate.opsForStream().add("del-stream", data);
     }
 
+    //스토리지 삭제용 프로듀서
+    //StorageCleanService.save 에서 호출
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void send(StorageCleanQueue storageClean) {
         log.info("accepted storageKey={}", storageClean.getStorageKey());
