@@ -32,7 +32,7 @@ public class Files {
 
     private String title;
 
-    private String eTag;
+    private String fileHash;
 
     @Column(name = "original_filename")
     private String originalFilename;

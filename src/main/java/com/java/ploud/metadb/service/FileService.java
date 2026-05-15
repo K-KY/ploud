@@ -48,7 +48,7 @@ public class FileService {
         User user = userService.findByUserSeq(userDetail.getUserSeq());
 
         //중복되는 파일 찾기
-        Files duplicate = findDuplicate(user.getUserSeq(), metaDataDto.getETag());
+        Files duplicate = findDuplicate(user.getUserSeq(), metaDataDto.getFileHash());
         String storageKey = metaDataDto.getStorageKey(); // 기본값으로 초기화
         if (duplicate != null) {// 조회한 중복 데이터가 null이 아니면 조회된 값의 storage key 사용
             log.info("Duplicate storage key: {}", storageKey);
@@ -66,14 +66,14 @@ public class FileService {
                 .size(metaDataDto.getSize())
                 .contentType(metaDataDto.getContentType())
                 .parent(getLastParent(user.getUserSeq(), metaDataDto.getLocation() + originalFilename))
-                .eTag(metaDataDto.getETag())
+                .fileHash(metaDataDto.getFileHash())
                 //todo 존재하는 데이터를 다시 확인중임 프론트에서 현재 경로 pk를 같이 받아서 없는 경로부터 확인하도록 최적화
                 .build();
 
     }
 
-    private Files findDuplicate(Long userSeq, String eTag) {
-        List<Files> duplicates = fileRepository.findByUser_UserSeqAndETag(userSeq, eTag);
+    private Files findDuplicate(Long userSeq, String fileHash) {
+        List<Files> duplicates = fileRepository.findByUser_UserSeqAndFileHash(userSeq, fileHash);
         log.info("found duplicates: {}", duplicates.size());
         if (duplicates.isEmpty()) {
             return null;
