@@ -30,4 +30,8 @@ public class StorageCleanQueue {
     private LocalDateTime created;
     @LastModifiedDate
     private LocalDateTime modified;
+
+    public void execute() {
+        executed = true;
+    }
 }
