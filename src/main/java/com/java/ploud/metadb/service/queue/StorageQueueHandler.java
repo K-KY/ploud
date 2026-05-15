@@ -40,8 +40,9 @@ public class StorageQueueHandler implements QueueHandler {
     @Override
     public void handle(QueueMessage queueMessage) {
         log.info("storage queue received: {}", queueMessage);
-        deleteQueueService.execute(queueMessage.queueId());
-        StorageCleanQueue storageCleanQueue = storageCleanService.get(queueMessage.userSeq(), queueMessage.targetSeq());
+        deleteQueueService.execute(queueMessage.queueId());//백업 큐 수정
+        //스토리지 삭제 큐 조회
+        StorageCleanQueue storageCleanQueue = storageCleanService.getAndExecute(queueMessage.userSeq(), queueMessage.targetSeq());
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
