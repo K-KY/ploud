@@ -34,7 +34,7 @@ public class DeleteQueueService {
 
     @Transactional
     public void execute(String queueId) {
-        log.info("execute dir queue {}", queueId);
+        log.info("execute delete queue {}", queueId);
         deleteQueueRepository.findById(queueId).ifPresent(DeleteQueue::execute);
     }
 }
