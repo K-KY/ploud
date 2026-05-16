@@ -23,6 +23,7 @@ public class StorageCleanQueue {
     private Long cleanSeq;
     private String storageKey;
     private Long userSeq;
+    @Enumerated(EnumType.STRING)
     private TargetTypes type;
     private boolean executed;
 
