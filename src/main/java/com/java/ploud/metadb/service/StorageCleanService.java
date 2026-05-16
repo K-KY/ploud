@@ -24,7 +24,7 @@ public class StorageCleanService {
                 .type(TargetTypes.DEL_STORAGE)
                 .build());
         storageCleanRepository.save(storageClean);
-        applicationEventPublisher.publishEvent(storageKey);
+        applicationEventPublisher.publishEvent(storageClean);
     }
 
     @Transactional
