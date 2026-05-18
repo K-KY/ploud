@@ -57,4 +57,8 @@ public class Directory {
     public void delete() {
         deleted = true;
     }
+
+    public void changeDir(Directory targetDirectory) {
+        parent = targetDirectory.getParent();
+    }
 }
