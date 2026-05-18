@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -108,9 +109,9 @@ public class DirectoryService {
         return directoryRepository.saveAndFlush(Directory.builder()
                 .parent(null)
                 .dirName(ROOT)
-                        .user(User.builder()
-                                .userSeq(userSeq)
-                                .build())
+                .user(User.builder()
+                        .userSeq(userSeq)
+                        .build())
                 .build());
     }
 
@@ -142,4 +143,22 @@ public class DirectoryService {
     public void inDeleteQueue(Long userSeq, Long dirSeq) {
         deleteQueueService.save(userSeq, dirSeq, TargetTypes.DEL_DIR);
     }
+
+    @Transactional
+    public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) {
+        //현재 디렉토리를 현재 디렉토리에 이동
+        if (Objects.equals(request.getDirSeq(), request.getTargetSeq())) {
+            log.error("can not same current={} and target={}", request.getDirSeq(), request.getParentSeq());
+            throw new IllegalArgumentException("can not same current dir and target dir");//todo 커스텀 예외처리
+        }
+        Directory moveDirectory = directoryRepository
+                .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getDirSeq());
+        Directory targetDirectory = directoryRepository
+                .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getTargetSeq());
+
+        moveDirectory.changeDir(targetDirectory);
+
+        return moveDirectory;
+    }
+
 }
