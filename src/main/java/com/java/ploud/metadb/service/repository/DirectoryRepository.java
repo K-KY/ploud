@@ -37,4 +37,6 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     List<Directory> findByUser_UserSeqAndParentDirSeqAndDeletedFalse(Long userUserSeq, Long parentDirSeq);
 
     Directory findByUser_UserSeqAndDirSeq(Long userSeq, Long dirSeq);
+
+    Directory findByUser_UserSeqAndDirSeqAndDeletedFalse(Long userSeq, Long parentSeq);
 }
