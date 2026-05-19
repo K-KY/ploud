@@ -55,4 +55,8 @@ public class Files {
     public void delete() {
         deleted = true;
     }
+
+    public void changeDir(Directory targetDir) {
+        this.parent = targetDir;
+    }
 }
