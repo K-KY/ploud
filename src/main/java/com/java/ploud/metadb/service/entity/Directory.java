@@ -77,6 +77,7 @@ public class Directory {
 
             Directory nodeParent = node.getParent();
 
+            //만약 이동될 디렉토리와 목적지가 같은 부모라면 검사 할 필요 없음
             if (nodeParent != null &&
                     nodeParent.getDirSeq().equals(this.getParent().getDirSeq())) {
                 break;
