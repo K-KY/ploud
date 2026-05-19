@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -113,5 +114,15 @@ public class FileService {
 
     public void inDeleteQueue(Long userSeq, Long fileSeq) {
         deleteQueueService.save(userSeq, fileSeq, TargetTypes.DEL_FILE);
+    }
+
+    public List<Files> changeDir(Long userSeq, Long targetSeq, List<Long> moveFiles) {
+        Directory dir = directoryService.findDir(userSeq, targetSeq);
+        List<Files> files = moveFiles.stream()
+                .map(mf -> fileRepository.findByUser_UserSeqAndFileSeq(userSeq, mf))
+                .filter(Objects::nonNull)
+                .toList();
+        files.forEach(f -> f.changeDir(dir));
+        return files;
     }
 }
