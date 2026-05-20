@@ -3,6 +3,8 @@ package com.java.ploud.metadb.service;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.auth.entity.User;
 import com.java.ploud.auth.service.UserService;
+import com.java.ploud.metadb.service.dto.FileChangeDto;
+import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
@@ -116,10 +118,12 @@ public class FileService {
         deleteQueueService.save(userSeq, fileSeq, TargetTypes.DEL_FILE);
     }
 
-    public List<Files> changeDir(Long userSeq, Long targetSeq, List<Long> moveFiles) {
-        Directory dir = directoryService.findDir(userSeq, targetSeq);
+    public List<Files> changeDir(Long userSeq, FileChangeDto.Request dto) {
+
+        Directory dir = directoryService.findDir(userSeq, dto.getTargetDirSeq());
+        List<FileDto.Request> moveFiles = dto.getFiles();
         List<Files> files = moveFiles.stream()
-                .map(mf -> fileRepository.findByUser_UserSeqAndFileSeq(userSeq, mf))
+                .map(mf -> fileRepository.findByUser_UserSeqAndFileSeq(userSeq, mf.getDirSeq()))
                 .filter(Objects::nonNull)
                 .toList();
         files.forEach(f -> f.changeDir(dir));

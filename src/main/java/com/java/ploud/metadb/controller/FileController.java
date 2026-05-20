@@ -2,6 +2,7 @@ package com.java.ploud.metadb.controller;
 
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.FileService;
+import com.java.ploud.metadb.service.dto.FileChangeDto;
 import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
 import com.java.ploud.metadb.service.entity.Files;
@@ -52,5 +53,11 @@ public class FileController {
     @DeleteMapping
     public void deleteFile(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileDto.Request request) {
         fileService.deleteFileSoft(userDetail.getUserSeq(), request.getDirSeq());
+    }
+
+    @PatchMapping
+    public ResponseEntity<?> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileChangeDto.Request request) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(fileService.changeDir(userDetail.getUserSeq(), request));
     }
 }
