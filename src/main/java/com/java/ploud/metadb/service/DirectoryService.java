@@ -156,7 +156,7 @@ public class DirectoryService {
         Directory targetDirectory = directoryRepository
                 .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getTargetSeq());
 
-        moveDirectory.changeDir(targetDirectory);
+        moveDirectory.changeDir(targetDirectory, new long [] {});
 
         return moveDirectory;
     }
