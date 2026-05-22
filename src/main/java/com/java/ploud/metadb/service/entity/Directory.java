@@ -9,6 +9,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Builder
@@ -58,31 +60,24 @@ public class Directory {
         deleted = true;
     }
 
-    public void changeDir(Directory targetDirectory) {
-        validateMovable(targetDirectory);
-        this.parent = targetDirectory;
+    public void changeDir(Directory target, long[] path) {
+        validateMovable(path);
+        this.parent = target;
     }
 
-    private void validateMovable(Directory targetDirectory) {
-        Directory node = targetDirectory;
+    private void validateMovable(long[] path) {
+
+        //root는 parent가 null임
         if (this.getParent() == null) {
             throw new IllegalArgumentException("루트 디렉토리 이동 불가");
         }
 
-        while (node != null) {
-            //목적지의 부모 디렉토리의 번호가 이동할 디렉토리 번호와 같으면 예외
-            if (node.getDirSeq().equals(this.getDirSeq())) {
+        //path에 자신의 번호가 포함되는 요청 예외
+        //마지막 번호는 자기 자신이므로 생략
+        for (int i = 0; i < path.length - 1; i++) {
+            if (Objects.equals(path[i], this.dirSeq)) {
                 throw new IllegalArgumentException("can not move the parent dir to child dir");//todo 커스텀 예외처리
             }
-
-            Directory nodeParent = node.getParent();
-
-            //만약 이동될 디렉토리와 목적지가 같은 부모라면 검사 할 필요 없음
-            if (nodeParent != null &&
-                    nodeParent.getDirSeq().equals(this.getParent().getDirSeq())) {
-                break;
-            }
-            node = node.getParent();//한계층 위로 이동하여 검사 지속
         }
     }
 }
