@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface DirectoryRepository extends JpaRepository<Directory, Long> {
 
-//    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    //    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT d FROM Directory d WHERE d.dirName = :dirName " +
             "AND (:parentSeq IS NULL AND d.parent IS NULL OR d.parent.dirSeq = :parentSeq) " +
             "AND d.user.userSeq = :userSeq")
@@ -39,4 +39,21 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     Directory findByUser_UserSeqAndDirSeq(Long userSeq, Long dirSeq);
 
     Directory findByUser_UserSeqAndDirSeqAndDeletedFalse(Long userSeq, Long parentSeq);
+
+    //트리 탐색 네이티브 쿼리
+    @Query(value =
+            "WITH RECURSIVE TargetAncestors AS ( " +
+                    "    SELECT dir_seq, parent_dir_seq " +
+                    "    FROM directory " +
+                    "    WHERE dir_seq = :target " +
+                    "    UNION ALL " +
+                    "    SELECT d.dir_seq, d.parent_dir_seq " +
+                    "    FROM directory d " +
+                    "    INNER JOIN TargetAncestors ta ON d.dir_seq = ta.parent_dir_seq " +
+                    ") " +
+                    "SELECT COUNT(*) > 0 " +
+                    "FROM TargetAncestors " +
+                    "WHERE dir_seq = :move",
+            nativeQuery = true)
+    Long checkCircularReference(@Param("move") Long move, @Param("target") Long target);
 }
