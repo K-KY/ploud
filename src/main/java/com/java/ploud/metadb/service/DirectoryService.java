@@ -5,6 +5,7 @@ import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.TargetTypes;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
+import com.java.ploud.util.PathEncryptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class DirectoryService {
     private final DirectoryRepository directoryRepository;
     private final DirectoryTransactionService directoryTransactionService;
     private final DeleteQueueService deleteQueueService;
+    private final PathEncryptor encryptor;
 
     /**
      * 외부에서 호출하는 메서드: multipart 파일의 originalFilename을 받아
@@ -145,18 +147,21 @@ public class DirectoryService {
     }
 
     @Transactional
-    public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) {
+    public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) throws Exception {
         //현재 디렉토리를 현재 디렉토리에 이동
         if (Objects.equals(request.getDirSeq(), request.getTargetSeq())) {
             log.error("can not same current={} and target={}", request.getDirSeq(), request.getParentSeq());
             throw new IllegalArgumentException("can not same current dir and target dir");//todo 커스텀 예외처리
         }
+
+        //이동할 디렉토라
         Directory moveDirectory = directoryRepository
                 .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getDirSeq());
+        //목적지
         Directory targetDirectory = directoryRepository
                 .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getTargetSeq());
 
-        moveDirectory.changeDir(targetDirectory, new long [] {});
+        moveDirectory.changeDir(targetDirectory, encryptor.decrypt(request.getPath()));
 
         return moveDirectory;
     }
