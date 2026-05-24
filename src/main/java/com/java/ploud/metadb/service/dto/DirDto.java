@@ -11,9 +11,11 @@ public class DirDto {
     @Builder
     public static class Request {
         private Long dirSeq;
+        private String path;
 
-        public Request(Long dirSeq) {
+        public Request(Long dirSeq, String path) {
             this.dirSeq = dirSeq;
+            this.path = path;
         }
 
         public Request() {
