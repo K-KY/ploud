@@ -28,6 +28,7 @@ public class DelProducer {
         data.put("type", delQueue.getType().getType());
         data.put("user", delQueue.getUserSeq().toString());
         data.put("queueId", delQueue.getQueueId());
+        data.put("path", delQueue.getPath());
 
         redisTemplate.opsForStream().add("del-stream", data);
     }
