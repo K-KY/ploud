@@ -3,7 +3,9 @@ package com.java.ploud.metadb.controller;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
+import com.java.ploud.metadb.service.dto.ExploreDto;
 import com.java.ploud.metadb.service.entity.Directory;
+import com.java.ploud.util.PathEncryptor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +15,11 @@ import java.util.List;
 @RequestMapping("/api/v1/dirs")
 public class DirController {
     private final DirectoryService directoryService;
+    private final PathEncryptor pathEncryptor;
 
-    public DirController(DirectoryService directoryService) {
+    public DirController(DirectoryService directoryService, PathEncryptor pathEncryptor) {
         this.directoryService = directoryService;
+        this.pathEncryptor = pathEncryptor;
     }
 
     /**
@@ -24,14 +28,17 @@ public class DirController {
      * @return - parentSeq를 부모로 갖는 하위 디렉토리
      */
     @PostMapping
-    public List<DirDto.Response> getDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
-        return directoryService.findChildDir(userDetail.getUserSeq(), request.getDirSeq())
+    public ExploreDto getDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
+
+        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), request.getDirSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
                         .dirSeq(d.getDirSeq())
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
+        String encrypt = pathEncryptor.encrypt(dirs.stream().map(DirDto.Response::getDirSeq).toList());
+        return new ExploreDto(dirs, encrypt);
     }
 
     @PostMapping("current")
@@ -49,7 +56,7 @@ public class DirController {
     @PatchMapping
     public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
         //디렉토리 삭제
-        directoryService.deleteDirSoft(userDetail.getUserSeq(), request);
+        directoryService.deleteDirSoft(userDetail.getUserSeq(), request.getDirSeq());
         //하위 디렉토리 큐 등록
         directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getDirSeq());
     }
