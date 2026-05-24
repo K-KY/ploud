@@ -30,11 +30,13 @@ public class QueueHandleManager {
         String type = message.getValue().get("type").toString();
         String userSeq = message.getValue().get("user").toString();
         String target = message.getValue().get("target").toString();
+        String path = message.getValue().get("path").toString();
 
         log.info("userSeq={}, targetSeq={}, type={}, queueId={}", userSeq, target, type, queueId);
 
         //핸들러에 메세지 레코드로 파싱해서 전달 -> 핸들러에서 message의 내부구조 몰라서 이렇게 함
-        handlers.get(type).handle(new QueueMessage(queueId, type, Long.parseLong(userSeq), Long.parseLong(target)));
+        handlers.get(type)
+                .handle(new QueueMessage(queueId, type, Long.parseLong(userSeq), Long.parseLong(target), path));
 
         deleteQueueService.execute(queueId);
     }
