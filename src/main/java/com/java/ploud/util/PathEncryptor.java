@@ -3,6 +3,8 @@ package com.java.ploud.util;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.StringJoiner;
 
 @Component
 public class PathEncryptor {
@@ -20,9 +22,11 @@ public class PathEncryptor {
         }
     }
 
-    public String encrypt(Long path) {
+    public String encrypt(List<Long> path) {
+        StringJoiner joiner = new StringJoiner("/");
+        path.forEach(p -> joiner.add(p.toString()));
         try {
-            return encryptor.encrypt(path.toString());
+            return encryptor.encrypt(joiner.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
