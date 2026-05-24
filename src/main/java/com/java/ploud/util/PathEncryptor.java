@@ -20,6 +20,14 @@ public class PathEncryptor {
         }
     }
 
+    public String encrypt(Long path) {
+        try {
+            return encryptor.encrypt(path.toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public long[] decrypt(String path) {
         try {
             return Arrays.stream(encryptor.decrypt(path).split("/")).mapToLong(Long::parseLong).toArray();
