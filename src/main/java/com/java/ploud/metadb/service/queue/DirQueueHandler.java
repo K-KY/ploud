@@ -32,10 +32,11 @@ public class DirQueueHandler implements QueueHandler {
     public void handle(QueueMessage msg) {
         log.info("dir queue received: {}", msg.queueId());
         //발행된 메세지의 디렉토리 삭제 수행
-        directoryService.deleteDirSoft(msg.userSeq(), new DirDto.Request(msg.targetSeq()));
+        directoryService.deleteDirSoft(msg.userSeq(), new DirDto.Request(msg.targetSeq(), msg.path()));
 
         //하위 항목 조회
-        List<Directory> childDir = directoryService.findChildDir(msg.userSeq(), msg.targetSeq());
+        List<Directory> childDir = directoryService.findChildDir(msg.userSeq(),
+                new DirDto.Request(msg.targetSeq(), msg.path()));
         log.info("childDirSize = {}", childDir.size());
         childDir.forEach(child -> {
             //하위 디렉토리 항목 큐에 등록
