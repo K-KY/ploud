@@ -27,6 +27,21 @@ public class DirController {
      * @param request - 조회용 postAPI
      * @return - parentSeq를 부모로 갖는 하위 디렉토리
      */
+    @GetMapping("{dir}/{path}")
+    public ExploreDto getDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
+                             @PathVariable Long dir,
+                             @PathVariable String path) {
+        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), dir)
+                .stream().map(d -> DirDto.Response
+                        .builder()
+                        .dirSeq(d.getDirSeq())
+                        .dirName(d.getDirName())
+                        .parentSeq(d.getParentSeq())
+                        .build()).toList();
+        String encrypt = pathEncryptor.encrypt(dirs.stream().map(DirDto.Response::getDirSeq).toList());
+        return new ExploreDto(dirs, encrypt);
+    }
+
     @PostMapping
     public ExploreDto getDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
 
@@ -40,6 +55,7 @@ public class DirController {
         String encrypt = pathEncryptor.encrypt(dirs.stream().map(DirDto.Response::getDirSeq).toList());
         return new ExploreDto(dirs, encrypt);
     }
+
 
     @PostMapping("current")
     public DirDto.Response getCurrent(@AuthenticationPrincipal AuthedUserDetail userDetail,@RequestBody DirDto.Request request) {
