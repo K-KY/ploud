@@ -52,12 +52,13 @@ public class Encryptor {
         System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
 
         //문자열로 변경
-        return Base64.getEncoder().encodeToString(combined);
+        return Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(combined);
     }
 
     public String decrypt(String cipherText) throws Exception {
 
-        byte[] decoded = Base64.getDecoder().decode(cipherText);
+        byte[] decoded = Base64.getUrlDecoder().decode(cipherText);
 
         byte[] iv = new byte[12];
         byte[] encrypted = new byte[decoded.length - 12];
