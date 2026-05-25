@@ -39,4 +39,11 @@ public class PathEncryptor {
             throw new RuntimeException(e);
         }
     }
+    public String decryptString(String path) {
+        try {
+            return encryptor.decrypt(path);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
