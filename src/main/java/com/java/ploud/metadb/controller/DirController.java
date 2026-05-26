@@ -69,6 +69,12 @@ public class DirController {
                 .build();
     }
 
+    @GetMapping("{path}")
+    public String getPath(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable String path) {
+        return pathEncryptor.decryptString(path);
+    }
+
+
     @PatchMapping
     public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
         //디렉토리 삭제
