@@ -22,9 +22,21 @@ public class DirController {
         this.pathEncryptor = pathEncryptor;
     }
 
+    @GetMapping
+    public ExploreDto getRootDir(@AuthenticationPrincipal AuthedUserDetail userDetail) {
+        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), 0L)
+                .stream().map(d -> DirDto.Response
+                        .builder()
+                        .dirSeq(d.getDirSeq())
+                        .dirName(d.getDirName())
+                        .parentSeq(d.getParentSeq())
+                        .build()).toList();
+        String encrypt = pathEncryptor.encrypt(dirs.stream().map(DirDto.Response::getDirSeq).toList());
+        return new ExploreDto(dirs, encrypt);
+    }
+
     /**
      *
-     * @param request - 조회용 postAPI
      * @return - parentSeq를 부모로 갖는 하위 디렉토리
      */
     @GetMapping("{dir}/{path}")
