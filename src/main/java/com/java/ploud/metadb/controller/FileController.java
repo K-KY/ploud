@@ -37,6 +37,18 @@ public class FileController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(fileService.getRootFiles(userDetail.getUserSeq()));
+    }
+
+    @GetMapping("{dir}")
+    public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable Long dir ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(fileService.readFiles(userDetail.getUserSeq(), dir));
+    }
+
     @PostMapping
     public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                        @RequestBody FileDto.Request request) {
