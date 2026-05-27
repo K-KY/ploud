@@ -95,7 +95,7 @@ public class DirController {
         directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getDirSeq());
     }
     
-    @PatchMapping
+    @PatchMapping("move")
     public DirDto.Response moveDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
                         @RequestBody DirDto.moveDirRequest request) {
         Directory directory = directoryService.changeDir(userDetail.getUserSeq(), request);
