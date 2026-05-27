@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.Normalizer;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 @Slf4j
@@ -40,7 +38,7 @@ public class MinioService {
                 .builder()
                 .bucket(bucket)
                 .delimiter("/")
-                .prefix(makeStorageName(userSeq, location))
+                .prefix(makeStorageName(location))
                 .recursive(false)
                 .build());
 
@@ -66,14 +64,13 @@ public class MinioService {
      * @return
      * @apiNote - ownerId/group/ 와 같은 "경로"를 만들어 반환
      */
-    private String makeStorageName(Long userSeq, String location) {
-        log.info("makeStorageName: userSeq={}, location={}", userSeq, location);
-        StringJoiner stringJoiner = new StringJoiner("/", "", "");
-        stringJoiner.add(String.valueOf(userSeq));
-        if (location != null) {
-            stringJoiner.add(location);
-        }
-        return Normalizer.normalize(stringJoiner.toString(), Normalizer.Form.NFC);
+    private String makeStorageName(String location) {
+        String[] split = location.split("\\.");
+        return makeRandomString() + "." + split[split.length - 1];
+    }
+
+    private String makeRandomString() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     public List<PreSignedUrlDto.Response> getPreSignedUrl(Long userSeq, List<PreSignedUrlDto.Request> fileNames) {
@@ -101,7 +98,7 @@ public class MinioService {
         }
 
         try {
-            String name = makeStorageName(userSeq, fileName);
+            String name = makeStorageName(fileName);
             log.info("Try get Pre-signed URL: {}", name);
             String presignedObjectUrl = minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
@@ -136,9 +133,9 @@ public class MinioService {
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucket)
-                            .object(dto.getStorageKey()).
-                            extraQueryParams(Map.of(
-                                    "response-content-disposition", "attachment;"
+                            .object(dto.getStorageKey())
+                            .extraQueryParams(Map.of(
+                                    "response-content-disposition", "attachment; filename=\"" + dto.getFileName()
                             ))
                             .expiry(60 * 60 * 24) // 24시간
                             .build()
