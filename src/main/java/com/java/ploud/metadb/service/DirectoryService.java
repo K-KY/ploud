@@ -147,7 +147,7 @@ public class DirectoryService {
     }
 
     @Transactional
-    public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) throws Exception {
+    public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) {
         //현재 디렉토리를 현재 디렉토리에 이동
         if (Objects.equals(request.getDirSeq(), request.getTargetSeq())) {
             log.error("can not same current={} and target={}", request.getDirSeq(), request.getParentSeq());
