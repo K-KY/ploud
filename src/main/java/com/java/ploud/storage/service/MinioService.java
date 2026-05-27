@@ -88,15 +88,6 @@ public class MinioService {
     }
 
     public Map<String, String> getPreSignedUrl(Long userSeq, String fileName) {
-        //동일한 파일 이름이 존재한다면 uuid를 붙여 업로드
-        if (checkExists(makeStorageName(userSeq, fileName))) {
-            int extensionStart = fileName.lastIndexOf('.');
-            String name = fileName.substring(0, extensionStart - 1);
-            String extension = fileName.substring(extensionStart);
-            fileName = name + "-" + UUID.randomUUID().toString().substring(0, 8) + extension;
-//            throw new IllegalArgumentException("File Name already exists : [" + fileName + "]");
-        }
-
         try {
             String name = makeStorageName(fileName);
             log.info("Try get Pre-signed URL: {}", name);
@@ -162,24 +153,6 @@ public class MinioService {
                  InvalidKeyException | InvalidResponseException | IOException |
                  NoSuchAlgorithmException | XmlParserException | ServerException e) {
             throw new RuntimeException("파일 삭제 실패", e);
-        }
-    }
-    public Boolean checkExists(String fileName) {
-        try {
-            minioClient.statObject(
-                    StatObjectArgs.builder()
-                            .bucket(bucket)
-                            .object(fileName)
-                            .build()
-            );
-            return true; // 존재
-        } catch (ErrorResponseException e) {
-            if (e.errorResponse().code().equals("NoSuchKey")) {
-                return false; // 없음
-            }
-            throw new RuntimeException(e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 }
