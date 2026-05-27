@@ -17,5 +17,5 @@ public interface FileRepository extends JpaRepository<Files, Long> {
     List<Files> findByUser_UserSeqAndFileHash(Long userUserSeq, String fileHash);
 
     //글로벌 중복 검사
-    List<Files> findByUser_UserSeqAndFileHash(String fileHash);
+    List<Files> findByFileHash(String fileHash);
 }

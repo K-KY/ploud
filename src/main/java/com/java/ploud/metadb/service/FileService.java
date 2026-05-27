@@ -76,7 +76,7 @@ public class FileService {
     }
 
     private Files findDuplicate(String fileHash) {
-        List<Files> duplicates = fileRepository.findByUser_UserSeqAndFileHash(fileHash);
+        List<Files> duplicates = fileRepository.findByFileHash(fileHash);
         //진짜로 이 경로의 파일이 존재하는지 확인
         log.info("found duplicates: {}", duplicates.size());
         if (duplicates.isEmpty()) {
