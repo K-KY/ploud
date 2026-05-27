@@ -95,9 +95,13 @@ public class FileService {
 
     public List<Files> readFiles(Long userSeq, Long dirSeq) {
         if (dirSeq == null) {
-            return fileRepository.findByUser_UserSeqAndParent_DirSeqAndDeletedFalse(userSeq, directoryService.findRoot(userSeq).getDirSeq());
+            return getRootFiles(userSeq);
         }
         return fileRepository.findByUser_UserSeqAndParent_DirSeqAndDeletedFalse(userSeq, dirSeq);
+    }
+
+    public List<Files> getRootFiles(Long userSeq) {
+        return fileRepository.findByUser_UserSeqAndParent_DirSeqAndDeletedFalse(userSeq, directoryService.findRoot(userSeq).getDirSeq());
     }
 
     public Directory createRoot(Long userSeq) {
