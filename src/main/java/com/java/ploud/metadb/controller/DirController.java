@@ -94,4 +94,15 @@ public class DirController {
         //하위 디렉토리 큐 등록
         directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getDirSeq());
     }
+    
+    @PatchMapping
+    public DirDto.Response moveDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
+                        @RequestBody DirDto.moveDirRequest request) {
+        Directory directory = directoryService.changeDir(userDetail.getUserSeq(), request);
+        return DirDto.Response.builder()
+                .dirSeq(directory.getDirSeq())
+                .dirName(directory.getDirName())
+                .parentSeq(directory.getParentSeq())
+                .build();
+    }
 }
