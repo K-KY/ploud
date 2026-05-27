@@ -51,7 +51,7 @@ public class FileService {
         User user = userService.findByUserSeq(userDetail.getUserSeq());
 
         //중복되는 파일 찾기
-        Files duplicate = findDuplicate(user.getUserSeq(), metaDataDto.getFileHash());
+        Files duplicate = findDuplicate(metaDataDto.getFileHash());
         String storageKey = metaDataDto.getStorageKey(); // 기본값으로 초기화
         if (duplicate != null) {// 조회한 중복 데이터가 null이 아니면 조회된 값의 storage key 사용
             log.info("Duplicate storage key: {}", storageKey);
@@ -75,8 +75,9 @@ public class FileService {
 
     }
 
-    private Files findDuplicate(Long userSeq, String fileHash) {
-        List<Files> duplicates = fileRepository.findByUser_UserSeqAndFileHash(userSeq, fileHash);
+    private Files findDuplicate(String fileHash) {
+        List<Files> duplicates = fileRepository.findByUser_UserSeqAndFileHash(fileHash);
+        //진짜로 이 경로의 파일이 존재하는지 확인
         log.info("found duplicates: {}", duplicates.size());
         if (duplicates.isEmpty()) {
             return null;
