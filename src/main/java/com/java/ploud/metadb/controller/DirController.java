@@ -86,7 +86,8 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
-        String encrypt = pathEncryptor.encrypt(dirs.stream().map(DirDto.Response::getDirSeq).toList());
-        return new ExploreDto(dirs, encrypt);
+        String encryptKey = pathEncryptor.encryptKey(dirs.stream().map(DirDto.Response::getDirSeq).toList());
+        String encryptPath = pathEncryptor.encryptPath(dirs.stream().map(DirDto.Response::getDirName).toList());
+        return new ExploreDto(dirs, encryptKey, encryptPath);
     }
 }

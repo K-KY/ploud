@@ -14,7 +14,7 @@ public class PathEncryptor {
         this.encryptor = encryptor;
     }
 
-    public String encrypt(String path) {
+    public String encryptKey(String path) {
         try {
             return encryptor.encrypt(path);
         } catch (Exception e) {
@@ -22,7 +22,7 @@ public class PathEncryptor {
         }
     }
 
-    public String encrypt(List<Long> path) {
+    public String encryptKey(List<Long> path) {
         StringJoiner joiner = new StringJoiner("/");
         path.forEach(p -> joiner.add(p.toString()));
         try {
@@ -32,13 +32,32 @@ public class PathEncryptor {
         }
     }
 
-    public long[] decrypt(String path) {
+    public String encryptPath(List<String> path) {
+        StringJoiner joiner = new StringJoiner("/");
+        path.forEach(joiner::add);
         try {
-            return Arrays.stream(encryptor.decrypt(path).split("/")).mapToLong(Long::parseLong).toArray();
+            return encryptor.encrypt(joiner.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    public long[] decryptKey(String key) {
+        try {
+            return Arrays.stream(encryptor.decrypt(key).split("/")).mapToLong(Long::parseLong).toArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String[] decryptPath(String path) {
+        try {
+            return (String[]) Arrays.stream(encryptor.decrypt(path).split("/")).toArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public String decryptString(String path) {
         try {
             return encryptor.decrypt(path);
