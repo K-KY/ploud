@@ -14,7 +14,7 @@ public class PathEncryptor {
         this.encryptor = encryptor;
     }
 
-    public String encryptKey(String path) {
+    public String encrypt(String path) {
         try {
             return encryptor.encrypt(path);
         } catch (Exception e) {
