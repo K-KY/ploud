@@ -9,6 +9,7 @@ public class ExploreDto {
     private List<DirDto.Response> dirs;
     private String key;
     private String path;
+    private Long current;
 
 
     public List<DirDto.Response> getDirs() {
@@ -21,5 +22,9 @@ public class ExploreDto {
 
     public String getPath() {
         return path;
+    }
+
+    public Long getCurrent() {
+        return current;
     }
 }
