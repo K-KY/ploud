@@ -19,7 +19,7 @@ public class Encryptor {
     private final byte[] keyBytes;
 
     public Encryptor(@Value("${encrypt.secret}") String secret) {
-        SECRET = secret;
+        SECRET = secret.replace("\"", "");
         keyBytes = SECRET.getBytes(StandardCharsets.UTF_8);
     }
 
