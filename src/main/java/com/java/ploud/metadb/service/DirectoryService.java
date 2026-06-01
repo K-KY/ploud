@@ -134,6 +134,10 @@ public class DirectoryService {
         return directoryRepository.findByUser_UserSeqAndDirSeq(userSeq, dirSeq);
     }
 
+    public Directory findParent(Long userSeq, Long dirSeq) {
+        return findDir(userSeq, dirSeq).getParent();
+    }
+
     @Transactional
     public void deleteDirSoft(Long userSeq, Long dirSeq) {
         //현재 디렉토리 삭제
