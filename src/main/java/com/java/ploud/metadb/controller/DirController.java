@@ -4,6 +4,7 @@ import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.dto.ExploreDto;
+import com.java.ploud.metadb.service.dto.PathDecryptDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.util.PathEncryptor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,9 +100,19 @@ public class DirController {
     }
 
 
-    @GetMapping("path/{path}")
-    public String getPath(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable String path) {
-        return pathEncryptor.decryptString(path);
+    @GetMapping("path/{path}/{key}")
+    public PathDecryptDto getPath(@AuthenticationPrincipal AuthedUserDetail userDetail,
+                                  @PathVariable String key,
+                                  @PathVariable String path) {
+        String dKey = pathEncryptor.decryptString(key);
+        String dPath = pathEncryptor.decryptString(path);
+
+        Directory dir = directoryService.findDir(userDetail.getUserSeq(), Long.parseLong(dKey.split("/")[0]));
+        if (dir == null) {
+            return null;
+        }
+
+        return new PathDecryptDto(dKey, dPath);
     }
 
 
