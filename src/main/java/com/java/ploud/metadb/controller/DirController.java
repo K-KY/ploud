@@ -100,7 +100,7 @@ public class DirController {
     }
 
 
-    @GetMapping("path/{path}/{key}")
+    @GetMapping("path/{key}/{path}")
     public PathDecryptDto getPath(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                   @PathVariable String key,
                                   @PathVariable String path) {
