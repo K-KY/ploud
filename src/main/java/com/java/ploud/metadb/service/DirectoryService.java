@@ -5,7 +5,6 @@ import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.TargetTypes;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
-import com.java.ploud.util.PathEncryptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class DirectoryService {
     private final DirectoryRepository directoryRepository;
     private final DirectoryTransactionService directoryTransactionService;
     private final DeleteQueueService deleteQueueService;
-    private final PathEncryptor encryptor;
 
     /**
      * 외부에서 호출하는 메서드: multipart 파일의 originalFilename을 받아
@@ -165,7 +163,7 @@ public class DirectoryService {
         Directory targetDirectory = directoryRepository
                 .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getTargetSeq());
 
-        moveDirectory.changeDir(targetDirectory, encryptor.decryptKey(request.getPath()));
+        moveDirectory.changeDir(targetDirectory, new long[] {0L});
 
         return moveDirectory;
     }

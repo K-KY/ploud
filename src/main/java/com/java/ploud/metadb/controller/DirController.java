@@ -4,9 +4,7 @@ import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.dto.ExploreDto;
-import com.java.ploud.metadb.service.dto.PathDecryptDto;
 import com.java.ploud.metadb.service.entity.Directory;
-import com.java.ploud.util.PathEncryptor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,19 +18,15 @@ import java.util.List;
 public class DirController {
     private static final String DIVIDER = "/";
     private final DirectoryService directoryService;
-    private final PathEncryptor pathEncryptor;
 
-    public DirController(DirectoryService directoryService, PathEncryptor pathEncryptor) {
+    public DirController(DirectoryService directoryService) {
         this.directoryService = directoryService;
-        this.pathEncryptor = pathEncryptor;
     }
 
     @GetMapping
     public ExploreDto getRootDir(@AuthenticationPrincipal AuthedUserDetail userDetail) {
         log.info("getRootDir");
         Directory root = directoryService.findRoot(userDetail.getUserSeq());
-        String eKey = pathEncryptor.encrypt(root.getDirSeq() + "");
-        String ePath = pathEncryptor.encrypt(root.getDirName());
         List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), root.getDirSeq())
                 .stream().map(d -> DirDto.Response
                         .builder()
@@ -40,19 +34,15 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
-        System.out.println("eKey = " + eKey);
-        System.out.println("ePath = " + ePath);
-        return new ExploreDto(dirs, eKey, ePath, root.getDirSeq());
+        return new ExploreDto(dirs, root.getDirSeq());
     }
 
     /**
      * @return - parentSeq를 부모로 갖는 하위 디렉토리
      */
-    @GetMapping("{dir}/{key}/{path}")
+    @GetMapping("{dir}")
     public ExploreDto getDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
-                             @PathVariable Long dir, @PathVariable String key, @PathVariable String path) {
-
-        log.info("getDir key = {}, path = {}", key, path);
+                             @PathVariable Long dir) {
         Directory directory = directoryService.findDir(userDetail.getUserSeq(), dir);
         List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), directory.getDirSeq())
                 .stream().map(d -> DirDto.Response
@@ -61,16 +51,12 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
-        String dKey = pathEncryptor.decryptString(key) + DIVIDER + directory.getDirSeq();
-        String dPath = pathEncryptor.decryptString(path) + DIVIDER + directory.getDirName();
-        String eKey = pathEncryptor.encrypt(dKey);
-        String ePath = pathEncryptor.encrypt(dPath);
-        return new ExploreDto(dirs, eKey, ePath, dir);
+        return new ExploreDto(dirs, dir);
     }
 
-    @GetMapping("up/{dir}/{key}/{path}")
+    @GetMapping("up/{dir}")
     public ExploreDto getUpDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
-                             @PathVariable Long dir, @PathVariable String key, @PathVariable String path) {
+                             @PathVariable Long dir) {
         Directory directory = directoryService.findParent(userDetail.getUserSeq(), dir);
         List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), directory.getDirSeq())
                 .stream().map(d -> DirDto.Response
@@ -79,12 +65,8 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
-        String dKey = pathEncryptor.decryptString(key);
-        String dPath = pathEncryptor.decryptString(path);
-        String eKey = pathEncryptor.encrypt(dKey.substring(0, dKey.lastIndexOf(DIVIDER)));
-        String ePath = pathEncryptor.encrypt(dPath.substring(0, dPath.lastIndexOf(DIVIDER)));
 
-        return new ExploreDto(dirs, eKey, ePath, dir);
+        return new ExploreDto(dirs, dir);
     }
 
     @PostMapping("current")
@@ -98,23 +80,6 @@ public class DirController {
                 .parentSeq(parentDir.getParentSeq())
                 .build();
     }
-
-
-    @GetMapping("path/{key}/{path}")
-    public PathDecryptDto getPath(@AuthenticationPrincipal AuthedUserDetail userDetail,
-                                  @PathVariable String key,
-                                  @PathVariable String path) {
-        String dKey = pathEncryptor.decryptString(key);
-        String dPath = pathEncryptor.decryptString(path);
-
-        Directory dir = directoryService.findDir(userDetail.getUserSeq(), Long.parseLong(dKey.split("/")[0]));
-        if (dir == null) {
-            return null;
-        }
-
-        return new PathDecryptDto(dKey, dPath);
-    }
-
 
     @PatchMapping
     public void deleteDir(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
@@ -136,7 +101,7 @@ public class DirController {
     }
 
     @NotNull
-    private ExploreDto toExploreDto(Long userSeq, Long dirSeq, String key, String path) {
+    private ExploreDto toExploreDto(Long userSeq, Long dirSeq) {
         Directory dir = directoryService.findDir(userSeq, dirSeq);
         List<DirDto.Response> dirs = directoryService.findChildDir(userSeq, dirSeq)
                 .stream().map(d -> DirDto.Response
@@ -145,12 +110,6 @@ public class DirController {
                         .dirName(d.getDirName())
                         .parentSeq(d.getParentSeq())
                         .build()).toList();
-        String dKey = pathEncryptor.decryptString(key) + DIVIDER + dir.getDirSeq();
-        String dPath = pathEncryptor.decryptString(path) + DIVIDER + dir.getDirName();
-        String eKey = pathEncryptor.encrypt(dKey);
-        String ePath = pathEncryptor.encrypt(dPath);
-        String encryptKey = pathEncryptor.encryptKey(dirs.stream().map(DirDto.Response::getDirSeq).toList());
-        String encryptPath = pathEncryptor.encryptPath(dirs.stream().map(DirDto.Response::getDirName).toList());
-        return new ExploreDto(dirs, eKey, ePath, dir.getDirSeq());
+        return new ExploreDto(dirs, dir.getDirSeq());
     }
 }
