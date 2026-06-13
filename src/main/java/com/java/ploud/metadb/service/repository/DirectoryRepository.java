@@ -1,5 +1,6 @@
 package com.java.ploud.metadb.service.repository;
 
+import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -56,4 +57,33 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
                     "WHERE dir_seq = :move",
             nativeQuery = true)
     Long checkCircularReference(@Param("move") Long move, @Param("target") Long target);
+
+    @Query(value = """
+    WITH RECURSIVE parent_tree AS (
+        SELECT dir_seq, parent_dir_seq, dir_name, 0 AS depth
+        FROM directory
+        WHERE dir_seq = :dirSeq
+          AND user_seq = :userSeq
+          AND deleted = 0
+
+        UNION ALL
+
+        SELECT d.dir_seq, d.parent_dir_seq, d.dir_name, pt.depth + 1
+        FROM directory d
+        JOIN parent_tree pt ON d.dir_seq = pt.parent_dir_seq
+        WHERE d.user_seq = :userSeq
+          AND d.deleted = 0
+          AND pt.depth < 100
+    )
+    SELECT dir_seq AS dirSeq,
+           parent_dir_seq AS parentDirSeq,
+           dir_name AS dirName,
+           depth
+    FROM parent_tree
+    ORDER BY depth ASC
+    """, nativeQuery = true)
+    List<DirectoryPathDto> findParentDirs(
+            @Param("userSeq") Long userSeq,
+            @Param("dirSeq") Long dirSeq
+    );
 }

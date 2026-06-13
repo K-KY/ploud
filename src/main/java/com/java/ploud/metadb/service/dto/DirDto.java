@@ -21,7 +21,6 @@ public class DirDto {
     }
 
     @Getter
-    @Builder
     public static class moveDirRequest {
         private Long dirSeq;//이동할 디렉토리 번호
         private Long targetSeq;//이동 목적지 디렉토리 번호

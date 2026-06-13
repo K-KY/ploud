@@ -3,6 +3,7 @@ package com.java.ploud.metadb.controller;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
+import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.dto.ExploreDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +100,16 @@ public class DirController {
                 .parentSeq(directory.getParentSeq())
                 .build();
     }
+
+    @GetMapping("hierarchy/{dirSeq}")
+    public List<DirectoryPathDto> getDirHierarchy(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable Long dirSeq) {
+        List<DirectoryPathDto> dirHierarchy = directoryService.getDirHierarchy(userDetail.getUserSeq(), dirSeq);
+        System.out.println("dirSeq = " + dirSeq);
+        System.out.println("dirHierarchy.size() = " + dirHierarchy.size());
+        return dirHierarchy;
+    }
+
+
 
     @NotNull
     private ExploreDto toExploreDto(Long userSeq, Long dirSeq) {

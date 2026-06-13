@@ -2,6 +2,7 @@ package com.java.ploud.metadb.service;
 
 import com.java.ploud.auth.entity.User;
 import com.java.ploud.metadb.service.dto.DirDto;
+import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.TargetTypes;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
@@ -166,6 +167,10 @@ public class DirectoryService {
         moveDirectory.changeDir(targetDirectory);
 
         return moveDirectory;
+    }
+
+    public List<DirectoryPathDto> getDirHierarchy(Long userSeq, Long dirSeq) {
+        return directoryRepository.findParentDirs(userSeq, dirSeq);
     }
 
 }
