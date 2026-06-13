@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -59,31 +60,30 @@ public class Directory {
         deleted = true;
     }
 
-    public void changeDir(Directory target, long[] path) {
+    public void changeDir(Directory target) {
         //root는 parent가 null임
         if (this.getParent() == null) {
             throw new IllegalArgumentException("루트 디렉토리 이동 불가");
         }
-        validateCycle(path);
-        validatePath(target, path);
-        this.parent = target;
+        if (validate(target)) {
+            this.parent = target;
+        }
     }
 
-    //path에 meveDir의 key가 포함 되어있지 않은지 확인
-    private void validateCycle(long[] path) {
-        //path에 자신의 번호가 포함되는 요청 예외
-        //마지막 번호는 자기 자신이므로 생략
-        for (int i = 0; i < path.length - 1; i++) {
-            if (path[i] == this.dirSeq) {
-                throw new IllegalArgumentException("can not move the parent dir to child dir");//todo 커스텀 예외처리
+    public boolean validate(Directory target) {
+
+        if (Objects.equals(target.dirSeq, this.dirSeq)) {
+            return false;
+        }
+        Directory targetParent = target.parent;
+        while (targetParent != null) {
+            //만약 타겟의 디렉토리 번호가 이동하려는 디렉토리의 번호와 같다면 false
+            if (Objects.equals(targetParent.dirSeq, this.dirSeq)) {
+                return false;
             }
+            targetParent = targetParent.parent;
         }
+        return true;
     }
 
-    //path의 마지막 경로(사용자가 현재 보고있는 화면) 와 목적지가 일치하는지 확인
-    private void validatePath(Directory target, long[] path) {
-        if (target.getDirSeq() != path[path.length - 1]) {
-            throw new IllegalArgumentException("target Path not match");
-        }
-    }
 }

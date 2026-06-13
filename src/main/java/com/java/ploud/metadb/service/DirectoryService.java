@@ -152,7 +152,7 @@ public class DirectoryService {
     public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) {
         //현재 디렉토리를 현재 디렉토리에 이동
         if (Objects.equals(request.getDirSeq(), request.getTargetSeq())) {
-            log.error("can not same current={} and target={}", request.getDirSeq(), request.getParentSeq());
+            log.error("can not same current={}", request.getDirSeq());
             throw new IllegalArgumentException("can not same current dir and target dir");//todo 커스텀 예외처리
         }
 
@@ -163,7 +163,7 @@ public class DirectoryService {
         Directory targetDirectory = directoryRepository
                 .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getTargetSeq());
 
-        moveDirectory.changeDir(targetDirectory, new long[] {0L});
+        moveDirectory.changeDir(targetDirectory);
 
         return moveDirectory;
     }
