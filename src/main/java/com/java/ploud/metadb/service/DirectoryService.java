@@ -10,6 +10,7 @@ import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -120,8 +121,13 @@ public class DirectoryService {
                 .build());
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Directory findRoot(Long userSeq) {
-        return directoryRepository.findByDirNameAndUser_UserSeq(ROOT, userSeq);
+        Directory root = directoryRepository.findByDirNameAndUser_UserSeq(ROOT, userSeq);
+        if (root == null) {
+            return createRoot(userSeq);
+        }
+        return root;
     }
 
     public List<Directory> findChildDir(Long userSeq, Long parentSeq) {

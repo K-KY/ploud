@@ -12,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//todo 암호화 관련 로직들 서비스 분리
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/dirs")
