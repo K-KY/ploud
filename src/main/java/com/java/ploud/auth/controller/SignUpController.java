@@ -7,6 +7,7 @@ import com.java.ploud.auth.service.mail.MailService;
 import com.java.ploud.auth.service.PasswordEncryptor;
 import com.java.ploud.auth.service.TempUserService;
 import com.java.ploud.auth.service.UserService;
+import com.java.ploud.metadb.service.DirectoryService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class SignUpController {
     private final UserService userService;
     private final PasswordEncryptor passwordEncryptor;
     private final MailService mailService;
+    private final DirectoryService directoryService;
 
     @PostMapping
     public void signup(@RequestBody UserDto.Request dto) throws JsonProcessingException, MessagingException {
@@ -35,6 +37,7 @@ public class SignUpController {
             throw new IllegalArgumentException("토큰이 존재하지 않음");
         }
         User user = userService.createUser(tempUser);//임시저장된 데이터 영속화
+        directoryService.createRoot(user.getUserSeq());
         return UserDto.of(user);
     }
 }
