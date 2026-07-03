@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.service;
 
 import com.java.ploud.auth.entity.User;
+import com.java.ploud.exceptions.RootNotFoundException;
 import com.java.ploud.metadb.service.dto.DirDto;
 import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.entity.Directory;
@@ -31,6 +32,9 @@ public class DirectoryService {
     @Transactional
     public Directory findOrCreateLastParent(String originalFilename, Long userSeq) {
         Directory root = findRoot(userSeq);
+        if (root == null) {
+            throw new RootNotFoundException("Root not found");
+        }
         if (originalFilename == null || originalFilename.isBlank()) {
             throw new IllegalArgumentException("Original filename cannot be null or empty");
         }

@@ -1,10 +1,12 @@
 package com.java.ploud.metadb.controller;
 
 import com.java.ploud.auth.dto.AuthedUserDetail;
+import com.java.ploud.exceptions.RootNotFoundException;
 import com.java.ploud.metadb.service.FileService;
 import com.java.ploud.metadb.service.dto.FileChangeDto;
 import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
+import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,11 @@ public class FileController {
             Files saved = fileService.upload(userDetail, request);
             return ResponseEntity.ok(saved);
 
-        } catch (Exception e) {
+        } catch (RootNotFoundException e) {
+            Directory root = fileService.createRoot(userDetail.getUserSeq());
+            return ResponseEntity.ok(fileService.upload(userDetail, request));
+        }
+        catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }

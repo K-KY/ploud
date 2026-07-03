@@ -1,6 +1,7 @@
 package com.java.ploud.metadb.service;
 
 import com.java.ploud.auth.entity.User;
+import com.java.ploud.exceptions.RootNotFoundException;
 import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import jakarta.persistence.EntityManager;
@@ -37,7 +38,7 @@ public class DirectoryTransactionService {
 
         //부모 디렉토리 조회
         Directory parent = directoryRepository.findById(parentSeq)
-                .orElseThrow(() -> new IllegalArgumentException("Parent directory not found: " + parentSeq));
+                .orElseThrow(() -> new RootNotFoundException("Parent directory not found: " + parentSeq));
 
         //없으면 생성
         return saveNewDirectory(parent, dirName, userSeq);
