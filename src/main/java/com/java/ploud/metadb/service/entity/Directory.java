@@ -24,6 +24,13 @@ import java.util.Objects;
                 columnNames = {"user_seq",
                         "parent_dir_seq",
                         "dir_name"}
+        ),
+        @UniqueConstraint(
+                name = "dir_owner_only_one_root",
+                columnNames = {
+                        "user_seq",
+                        "is_root"
+                }
         )
 })
 public class Directory {
@@ -45,6 +52,8 @@ public class Directory {
     private Directory parent;
 
     private boolean deleted;
+
+    private Boolean isRoot;
 
     @CreatedDate
     private LocalDateTime created;

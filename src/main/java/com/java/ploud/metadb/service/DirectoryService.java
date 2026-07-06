@@ -118,6 +118,7 @@ public class DirectoryService {
                 .user(User.builder()
                         .userSeq(userSeq)
                         .build())
+                .isRoot(true)
                 .build());
     }
 

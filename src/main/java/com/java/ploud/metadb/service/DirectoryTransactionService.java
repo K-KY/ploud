@@ -30,7 +30,7 @@ public class DirectoryTransactionService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Directory findOrCreateChild(Long parentSeq, String dirName, Long userSeq) {
-        //비관적 락으로 조회
+        //비관적 락으로 조회 todo 락 제거 후 업로드 시도
         Optional<Directory> existing = directoryRepository.findWithLock(dirName, parentSeq, userSeq);
         if (existing.isPresent()) {
             return existing.get();
@@ -53,6 +53,7 @@ public class DirectoryTransactionService {
         Directory d = Directory.builder()
                 .dirName(dirName)
                 .parent(parent)
+                .isRoot(null)
                 .user(User.builder()
                         .userSeq(userSeq)
                         .build())
