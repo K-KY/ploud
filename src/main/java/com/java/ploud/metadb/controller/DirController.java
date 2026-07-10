@@ -3,6 +3,7 @@ package com.java.ploud.metadb.controller;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.metadb.service.DirectoryService;
 import com.java.ploud.metadb.service.dto.DirDto;
+import com.java.ploud.metadb.service.dto.DirectoryDto;
 import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.dto.ExploreDto;
 import com.java.ploud.metadb.service.entity.Directory;
@@ -27,13 +28,8 @@ public class DirController {
     public ExploreDto getRootDir(@AuthenticationPrincipal AuthedUserDetail userDetail) {
         log.info("getRootDir");
         Directory root = directoryService.findRoot(userDetail.getUserSeq());
-        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), root.getDirSeq())
-                .stream().map(d -> DirDto.Response
-                        .builder()
-                        .dirSeq(d.getDirSeq())
-                        .dirName(d.getDirName())
-                        .parentSeq(d.getParentSeq())
-                        .build()).toList();
+        List<DirectoryDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), root.getDirSeq())
+                .stream().map(DirectoryDto.Response::from).toList();
         return new ExploreDto(dirs, root.getDirSeq());
     }
 
@@ -43,14 +39,8 @@ public class DirController {
     @GetMapping("{dir}")
     public ExploreDto getDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
                              @PathVariable Long dir) {
-        Directory directory = directoryService.findDir(userDetail.getUserSeq(), dir);
-        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), directory.getDirSeq())
-                .stream().map(d -> DirDto.Response
-                        .builder()
-                        .dirSeq(d.getDirSeq())
-                        .dirName(d.getDirName())
-                        .parentSeq(d.getParentSeq())
-                        .build()).toList();
+        List<DirectoryDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), dir)
+                .stream().map(DirectoryDto.Response::from).toList();
         return new ExploreDto(dirs, dir);
     }
 
@@ -58,27 +48,18 @@ public class DirController {
     public ExploreDto getUpDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
                              @PathVariable Long dir) {
         Directory directory = directoryService.findParent(userDetail.getUserSeq(), dir);
-        List<DirDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), directory.getDirSeq())
-                .stream().map(d -> DirDto.Response
-                        .builder()
-                        .dirSeq(d.getDirSeq())
-                        .dirName(d.getDirName())
-                        .parentSeq(d.getParentSeq())
-                        .build()).toList();
+        List<DirectoryDto.Response> dirs = directoryService.findChildDir(userDetail.getUserSeq(), directory.getDirSeq())
+                .stream().map(DirectoryDto.Response::from).toList();
 
         return new ExploreDto(dirs, dir);
     }
 
     @PostMapping("current")
-    public DirDto.Response getCurrent(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
+    public DirectoryDto.Response getCurrent(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody DirDto.Request request) {
 
         Directory parentDir = directoryService.findDir(userDetail.getUserSeq(), request.getDirSeq());
 
-        return DirDto.Response.builder()
-                .dirSeq(parentDir.getDirSeq())
-                .dirName(parentDir.getDirName())
-                .parentSeq(parentDir.getParentSeq())
-                .build();
+        return DirectoryDto.Response.from(parentDir);
     }
 
     @PatchMapping
@@ -90,14 +71,10 @@ public class DirController {
     }
     
     @PatchMapping("move")
-    public DirDto.Response moveDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
+    public DirectoryDto.Response moveDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                    @RequestBody DirDto.moveDirRequest request) {
         Directory directory = directoryService.changeDir(userDetail.getUserSeq(), request);
-        return DirDto.Response.builder()
-                .dirSeq(directory.getDirSeq())
-                .dirName(directory.getDirName())
-                .parentSeq(directory.getParentSeq())
-                .build();
+        return DirectoryDto.Response.from(directory);
     }
 
     @GetMapping("hierarchy/{dirSeq}")
@@ -113,13 +90,8 @@ public class DirController {
     @NotNull
     private ExploreDto toExploreDto(Long userSeq, Long dirSeq) {
         Directory dir = directoryService.findDir(userSeq, dirSeq);
-        List<DirDto.Response> dirs = directoryService.findChildDir(userSeq, dirSeq)
-                .stream().map(d -> DirDto.Response
-                        .builder()
-                        .dirSeq(d.getDirSeq())
-                        .dirName(d.getDirName())
-                        .parentSeq(d.getParentSeq())
-                        .build()).toList();
+        List<DirectoryDto.Response> dirs = directoryService.findChildDir(userSeq, dirSeq)
+                .stream().map(DirectoryDto.Response::from).toList();
         return new ExploreDto(dirs, dir.getDirSeq());
     }
 }

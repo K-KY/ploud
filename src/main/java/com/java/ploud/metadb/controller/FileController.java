@@ -3,6 +3,7 @@ package com.java.ploud.metadb.controller;
 import com.java.ploud.auth.dto.AuthedUserDetail;
 import com.java.ploud.exceptions.RootNotFoundException;
 import com.java.ploud.metadb.service.FileService;
+import com.java.ploud.metadb.service.dto.DirectoryDto;
 import com.java.ploud.metadb.service.dto.FileChangeDto;
 import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -44,28 +47,28 @@ public class FileController {
     }
 
     @GetMapping
-    public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail ) {
+    public ResponseEntity<List<FileDto.Response>> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.getRootFiles(userDetail.getUserSeq()));
+                .body(toFileResponses(fileService.getRootFiles(userDetail.getUserSeq())));
     }
 
     @GetMapping("{dir}")
-    public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable Long dir ) {
+    public ResponseEntity<List<FileDto.Response>> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail, @PathVariable Long dir ) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.readFiles(userDetail.getUserSeq(), dir));
+                .body(toFileResponses(fileService.readFiles(userDetail.getUserSeq(), dir)));
     }
 
     @PostMapping
-    public ResponseEntity<?> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
+    public ResponseEntity<List<FileDto.Response>> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                        @RequestBody FileDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.readFiles(userDetail.getUserSeq(), request.getDirSeq()));
+                .body(toFileResponses(fileService.readFiles(userDetail.getUserSeq(), request.getDirSeq())));
     }
 
     @PostMapping("/newroot")
-    public ResponseEntity<?> newRoot(@AuthenticationPrincipal AuthedUserDetail userDetail) {
+    public ResponseEntity<DirectoryDto.Response> newRoot(@AuthenticationPrincipal AuthedUserDetail userDetail) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.createRoot(userDetail.getUserSeq()));
+                .body(DirectoryDto.Response.from(fileService.createRoot(userDetail.getUserSeq())));
     }
 
     @DeleteMapping
@@ -74,8 +77,14 @@ public class FileController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileChangeDto.Request request) {
+    public ResponseEntity<List<FileDto.Response>> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileChangeDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(fileService.changeDir(userDetail.getUserSeq(), request));
+                .body(toFileResponses(fileService.changeDir(userDetail.getUserSeq(), request)));
+    }
+
+    private List<FileDto.Response> toFileResponses(List<Files> files) {
+        return files.stream()
+                .map(FileDto.Response::from)
+                .toList();
     }
 }
