@@ -46,7 +46,7 @@ public class Directory {
     @JoinColumn(name = "user_seq")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_dir_seq")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Directory parent;

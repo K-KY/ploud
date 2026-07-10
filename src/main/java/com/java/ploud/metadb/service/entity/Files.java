@@ -42,7 +42,7 @@ public class Files {
     @Column(name = "content_type")
     private String contentType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Directory parent;
 
