@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173"};
+    private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173", "https://kky.tail0a6d17.ts.net"};
     private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"};
     private static final String[] WHITELIST_URI = {"/login","/logout", "/signup", "/refresh"};
 
@@ -52,7 +52,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         AuthenticationManager authenticationManager =
                 authenticationConfiguration.getAuthenticationManager();
 
@@ -105,10 +104,9 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList(WHITELIST_ORIGIN));
+        configuration.setAllowedOriginPatterns(List.of(WHITELIST_ORIGIN));
         configuration.setAllowedMethods(Arrays.asList(WHITELIST_METHODS));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
