@@ -1,10 +1,10 @@
-ARG BASE_IMAGE=eclipse-temurin:21-jre
-FROM ${BASE_IMAGE}
-
+FROM gradle:8.14-jdk21 AS build
 WORKDIR /app
+COPY . .
+RUN gradle clean bootJar --no-daemon
 
-COPY build/libs/ploud-0.0.1-SNAPSHOT.jar app.jar
-
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/build/libs/ploud-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
