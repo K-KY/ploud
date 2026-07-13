@@ -1,7 +1,10 @@
 package com.java.ploud.metadb.service.repository;
 
 import com.java.ploud.metadb.service.entity.Files;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,4 +21,21 @@ public interface FileRepository extends JpaRepository<Files, Long> {
 
     //글로벌 중복 검사
     List<Files> findByFileHash(String fileHash);
+
+    @Query("""
+            SELECT f
+            FROM Files f
+            WHERE f.user.userSeq = :userSeq
+              AND f.deleted = false
+              AND (
+                    LOWER(f.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                 OR LOWER(f.originalFilename) LIKE LOWER(CONCAT('%', :keyword, '%'))
+              )
+            ORDER BY f.title ASC, f.fileSeq ASC
+            """)
+    List<Files> searchFiles(
+            @Param("userSeq") Long userSeq,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 }

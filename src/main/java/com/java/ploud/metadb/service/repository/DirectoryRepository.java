@@ -2,6 +2,7 @@ package com.java.ploud.metadb.service.repository;
 
 import com.java.ploud.metadb.service.dto.DirectoryPathDto;
 import com.java.ploud.metadb.service.entity.Directory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -40,6 +41,21 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     Directory findByUser_UserSeqAndDirSeq(Long userSeq, Long dirSeq);
 
     Directory findByUser_UserSeqAndDirSeqAndDeletedFalse(Long userSeq, Long parentSeq);
+
+    @Query("""
+            SELECT d
+            FROM Directory d
+            WHERE d.user.userSeq = :userSeq
+              AND d.deleted = false
+              AND d.dirName <> ''
+              AND LOWER(d.dirName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            ORDER BY d.dirName ASC, d.dirSeq ASC
+            """)
+    List<Directory> searchDirectories(
+            @Param("userSeq") Long userSeq,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
 
     //트리 탐색 네이티브 쿼리
     @Query(value =
