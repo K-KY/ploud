@@ -25,6 +25,9 @@ public class JwtProvider {
     private final long HOUR = 1000L * 60 * 60; // 1시간
     private final long DAY = 86400L * 1000; // 1일
 
+    @Value("${refresh.path}")
+    private String refreshPath;
+
     public JwtProvider(@Value("${jwt.secret}") String secretKey) {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -72,13 +75,13 @@ public class JwtProvider {
         return new JwtDto.RefreshToken(tokenId, parseCookie(token));
     }
 
-    private static ResponseCookie parseCookie(String token) {
+    private ResponseCookie parseCookie(String token) {
         return ResponseCookie.from("refresh_token", token)
                 .maxAge(Duration.ofDays(30))
                 .httpOnly(true)//개발자 콘솔에서 읽지 못하게
                 .secure(false)//https 필수 옵션인데 지금 없으니 일단 false
                 .sameSite("Lax")//요청부와 응답부 도메인이 같아야하는가?
-                .path("/refresh")//이 경로로 사작하는 요청에만 이 쿠키를 자동으로 포함 시킴
+                .path(refreshPath)//이 경로로 사작하는 요청에만 이 쿠키를 자동으로 포함 시킴
                 .build();
     }
 
@@ -88,7 +91,7 @@ public class JwtProvider {
                 .httpOnly(true)
                 .secure(false)
                 .sameSite("Lax")
-                .path("/refresh")
+                .path(refreshPath)
                 .build();
     }
 }
