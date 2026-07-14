@@ -7,6 +7,7 @@ import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +23,18 @@ import java.util.UUID;
 public class MinioService {
     private static final String URL = "URL";
     private static final String STORAGE_KEY = "storageKey";
+
     private final MinioClient minioClient;
+    private final MinioClient internalMinioClient;
     private final String bucket;
     @Value("${minio.presign.expirySeconds}")
     private int defaultExpirySeconds; // 하루
 
 
-    public MinioService(MinioClient minioClient, @Value("${minio.bucket}") String bucket) {
+    public MinioService(@Qualifier("externalMinioClient") MinioClient minioClient,
+                        @Qualifier("internalMinioClient") MinioClient internalMinioClient, @Value("${minio.bucket}") String bucket) {
         this.minioClient = minioClient;
+        this.internalMinioClient = internalMinioClient;
         this.bucket = bucket;
     }
 
@@ -48,10 +53,10 @@ public class MinioService {
     private void checkBucket() throws InvalidKeyException, IOException, NoSuchAlgorithmException {
         try {
             //버킷 있는지 찾기
-            boolean found = minioClient.bucketExists(io.minio.BucketExistsArgs.builder().bucket(bucket).build());
+            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
             //없으면 만들고
             if (!found) {
-                minioClient.makeBucket(io.minio.MakeBucketArgs.builder().bucket(bucket).build());
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
             }
             //안되면 예외
         } catch (MinioException e) {
