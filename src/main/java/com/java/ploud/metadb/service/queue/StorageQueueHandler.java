@@ -9,6 +9,7 @@ import io.minio.MinioClient;
 import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,8 @@ public class StorageQueueHandler implements QueueHandler {
     private final String bucket;
 
     public StorageQueueHandler(StorageCleanService storageCleanService, DeleteQueueService deleteQueueService,
-                               MinioClient minioClient, @Value("${minio.bucket}") String bucket) {
+                               @Qualifier("internalMinioClient") MinioClient minioClient,
+                               @Value("${minio.bucket}") String bucket) {
         this.storageCleanService = storageCleanService;
         this.deleteQueueService = deleteQueueService;
         this.minioClient = minioClient;
