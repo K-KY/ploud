@@ -7,7 +7,6 @@ import com.java.ploud.metadb.service.dto.DirectoryDto;
 import com.java.ploud.metadb.service.dto.FileChangeDto;
 import com.java.ploud.metadb.service.dto.FileDto;
 import com.java.ploud.metadb.service.dto.MetaDataDto;
-import com.java.ploud.metadb.service.entity.Directory;
 import com.java.ploud.metadb.service.entity.Files;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,17 +28,16 @@ public class FileController {
     }
 
     @PostMapping(value = "upload", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Files> upload(
+    public ResponseEntity<FileDto.Response> upload(
             @AuthenticationPrincipal AuthedUserDetail userDetail,
             @RequestBody MetaDataDto request
     ) {
         try {
-            Files saved = fileService.upload(userDetail, request);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.ok(fileService.uploadResponse(userDetail, request));
 
         } catch (RootNotFoundException e) {
-            Directory root = fileService.createRoot(userDetail.getUserSeq());
-            return ResponseEntity.ok(fileService.upload(userDetail, request));
+            fileService.createRoot(userDetail.getUserSeq());
+            return ResponseEntity.ok(fileService.uploadResponse(userDetail, request));
         }
         catch (Exception e) {
             throw new IllegalArgumentException(e);

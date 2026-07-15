@@ -46,6 +46,13 @@ public class FileService {
         return file;
     }
 
+    @Transactional
+    public FileDto.Response uploadResponse(AuthedUserDetail userDetail, MetaDataDto metaDataDto) {
+        Files file = buildFile(userDetail, metaDataDto);
+        Files saved = fileRepository.save(file);
+        return FileDto.Response.from(saved);
+    }
+
     public Files buildFile(AuthedUserDetail userDetail, MetaDataDto metaDataDto) {
         String originalFilename = metaDataDto.getOriginalFilename();
         User user = userService.findByUserSeq(userDetail.getUserSeq());
