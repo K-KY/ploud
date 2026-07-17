@@ -130,12 +130,12 @@ public class FileService {
         deleteQueueService.save(userSeq, fileSeq, TargetTypes.DEL_FILE);
     }
 
+    @Transactional
     public List<Files> changeDir(Long userSeq, FileChangeDto.Request dto) {
-
         Directory dir = directoryService.findDir(userSeq, dto.getTargetDirSeq());
         List<FileDto.Request> moveFiles = dto.getFiles();
         List<Files> files = moveFiles.stream()
-                .map(mf -> fileRepository.findByUser_UserSeqAndFileSeq(userSeq, mf.getDirSeq()))
+                .map(mf -> fileRepository.findByUser_UserSeqAndFileSeq(userSeq, mf.getFileSeq()))
                 .filter(Objects::nonNull)
                 .toList();
         files.forEach(f -> f.changeDir(dir));
