@@ -60,7 +60,7 @@ public class FileController {
     public ResponseEntity<List<FileDto.Response>> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                        @RequestBody FileDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(toFileResponses(fileService.readFiles(userDetail.getUserSeq(), request.getDirSeq())));
+                .body(toFileResponses(fileService.readFiles(userDetail.getUserSeq(), request.getFileSeq())));
     }
 
     @PostMapping("/newroot")
@@ -71,11 +71,12 @@ public class FileController {
 
     @DeleteMapping
     public void deleteFile(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileDto.Request request) {
-        fileService.deleteFileSoft(userDetail.getUserSeq(), request.getDirSeq());
+        fileService.deleteFileSoft(userDetail.getUserSeq(), request.getFileSeq());
     }
 
     @PatchMapping
-    public ResponseEntity<List<FileDto.Response>> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail, @RequestBody FileChangeDto.Request request) {
+    public ResponseEntity<List<FileDto.Response>> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail
+            , @RequestBody FileChangeDto.Request request) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(toFileResponses(fileService.changeDir(userDetail.getUserSeq(), request)));
     }

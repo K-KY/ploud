@@ -11,10 +11,10 @@ public class FileDto {
     @Getter
     @Builder
     public static class Request {
-        private Long dirSeq;
+        private Long fileSeq;
 
         public Request(Long dirSeq) {
-            this.dirSeq = dirSeq;
+            this.fileSeq = dirSeq;
         }
 
         public Request() {
