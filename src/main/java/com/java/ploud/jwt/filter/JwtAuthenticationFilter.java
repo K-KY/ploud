@@ -49,6 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String uri = request.getRequestURI();
+
+        return uri.equals("/actuator/health")
+                || uri.equals("/actuator/prometheus");
+    }
+
     private String resolveToken(HttpServletRequest request) {
         String bearer = request.getHeader("Authorization");// 프론트가 jwt를 넣을 헤더 이름
         if (bearer != null && bearer.startsWith("Bearer ")) {
