@@ -37,7 +37,9 @@ public class SecurityConfig {
 
     private static final String[] WHITELIST_ORIGIN = {"http://localhost:5173", "https://kky.tail0a6d17.ts.net"};
     private static final String[] WHITELIST_METHODS = {"GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS"};
-    private static final String[] WHITELIST_URI = {"/login","/logout", "/signup", "/refresh"};
+    private static final String[] WHITELIST_URI = {
+            "/login","/logout", "/signup", "/refresh",
+            "/actuator/health", "/actuator/prometheus"};
 
     public SecurityConfig(UserService userService, JwtService jwtService, JwtProvider jwtProvider,
                           ObjectMapper objectMapper, PasswordEncoder passwordEncoder,
