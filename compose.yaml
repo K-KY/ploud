@@ -24,6 +24,10 @@ services:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+
+    networks:
+      - default
+      - monitor
     restart: unless-stopped
 
   ploud-front:
@@ -108,6 +112,11 @@ services:
         mc alias set ploud http://minio:9000 "$${MINIO_ACCESS_KEY}" "$${MINIO_SECRET}" &&
         mc mb --ignore-existing ploud/test
     restart: "no"
+
+networks:
+  monitor:
+    external: true
+    name: monitor
 
 volumes:
   mysql-data:
