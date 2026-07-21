@@ -1,6 +1,6 @@
 services:
   ploud:
-    image: rlarbdud/ploud-back:0.0.1
+    image: rlarbdud/ploud-back:latest
     container_name: ploud
     env_file:
       - path: .env
@@ -24,6 +24,16 @@ services:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+    restart: unless-stopped
+
+  ploud-front:
+    image: rlarbdud/ploud-front:latest
+    container_name: ploud-front
+    ports:
+      - "3001:80"
+    depends_on:
+      ploud:
+        condition: service_started
     restart: unless-stopped
 
   mysql:
