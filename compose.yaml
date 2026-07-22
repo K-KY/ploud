@@ -141,3 +141,4 @@ volumes:
   mysql-data:
   redis-data:
   minio-data:
+  alloy-data:
