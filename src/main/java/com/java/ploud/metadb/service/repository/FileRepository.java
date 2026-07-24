@@ -2,10 +2,12 @@ package com.java.ploud.metadb.service.repository;
 
 import com.java.ploud.metadb.service.entity.Files;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface FileRepository extends JpaRepository<Files, Long> {
@@ -38,4 +40,8 @@ public interface FileRepository extends JpaRepository<Files, Long> {
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    @EntityGraph(attributePaths = {"parent"})
+    List<Files> findAllByParent_DirSeqIn(Collection<Long> dirSeqs);
+
 }
