@@ -102,4 +102,7 @@ public interface DirectoryRepository extends JpaRepository<Directory, Long> {
             @Param("userSeq") Long userSeq,
             @Param("dirSeq") Long dirSeq
     );
+
+    List<Directory> findAllByParent_DirSeq(Long parentDirSeq);
+
 }
