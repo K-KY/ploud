@@ -170,7 +170,7 @@ public class MinioService {
     public InputStream getObject(String storageKey) {
         try {
             log.info("Get object from minio storage: {}", storageKey);
-            return minioClient.getObject(
+            return internalMinioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(bucket)
                             .object(storageKey)
@@ -189,7 +189,7 @@ public class MinioService {
     public long getObjectSize(String storageKey) {
         log.info("Get object size from minio storage: {}", storageKey);
         try {
-            StatObjectResponse stat = minioClient.statObject(
+            StatObjectResponse stat = internalMinioClient.statObject(
                     StatObjectArgs.builder()
                             .bucket(bucket)
                             .object(storageKey)
