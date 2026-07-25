@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -160,4 +161,45 @@ public class MinioService {
             throw new RuntimeException("파일 삭제 실패", e);
         }
     }
+
+    /**
+     * 스토리지 키에 매핑된 파일 조회
+     * @param storageKey
+     * @return
+     */
+    public InputStream getObject(String storageKey) {
+        try {
+            log.info("Get object from minio storage: {}", storageKey);
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(storageKey)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get object from MinIO: " + storageKey, e);
+        }
+    }
+
+    /**
+     * 스토리지 키에 매핑된 파일의 사이즈 반환
+     * @param storageKey
+     * @return
+     */
+    public long getObjectSize(String storageKey) {
+        log.info("Get object size from minio storage: {}", storageKey);
+        try {
+            StatObjectResponse stat = minioClient.statObject(
+                    StatObjectArgs.builder()
+                            .bucket(bucket)
+                            .object(storageKey)
+                            .build()
+            );
+
+            return stat.size();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get object size from MinIO: " + storageKey, e);
+        }
+    }
+
 }
