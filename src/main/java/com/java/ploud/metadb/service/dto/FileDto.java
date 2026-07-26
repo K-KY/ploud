@@ -22,6 +22,15 @@ public class FileDto {
     }
 
     @Getter
+    public static class RenameRequest {
+        private Long fileSeq;
+        private String title;
+
+        public RenameRequest() {
+        }
+    }
+
+    @Getter
     @Builder
     public static class Response {
         private Long dirSeq;

@@ -30,6 +30,15 @@ public class DirDto {
     }
 
     @Getter
+    public static class RenameRequest {
+        private Long dirSeq;
+        private String dirName;
+
+        public RenameRequest() {
+        }
+    }
+
+    @Getter
     @Builder
     public static class Response {
         private Long dirSeq;

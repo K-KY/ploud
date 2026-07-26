@@ -69,6 +69,13 @@ public class DirController {
         //하위 디렉토리 큐 등록
         directoryService.inDeleteQueue(userDetail.getUserSeq(), request.getDirSeq());
     }
+
+    @PatchMapping("name")
+    public DirectoryDto.Response renameDir(@AuthenticationPrincipal AuthedUserDetail userDetail,
+                                           @RequestBody DirDto.RenameRequest request) {
+        Directory directory = directoryService.renameDir(userDetail.getUserSeq(), request);
+        return DirectoryDto.Response.from(directory);
+    }
     
     @PatchMapping("move")
     public DirectoryDto.Response moveDir(@AuthenticationPrincipal AuthedUserDetail userDetail,

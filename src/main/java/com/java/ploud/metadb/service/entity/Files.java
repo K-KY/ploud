@@ -56,6 +56,13 @@ public class Files {
         deleted = true;
     }
 
+    public void rename(String title) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("파일 이름은 비어 있을 수 없습니다.");
+        }
+        this.title = title;
+    }
+
     public void changeDir(Directory targetDir) {
         this.parent = targetDir;
     }

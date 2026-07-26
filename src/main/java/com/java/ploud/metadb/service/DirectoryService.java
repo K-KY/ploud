@@ -161,6 +161,14 @@ public class DirectoryService {
     }
 
     @Transactional
+    public Directory renameDir(Long userSeq, DirDto.RenameRequest request) {
+        Directory directory = directoryRepository
+                .findByUser_UserSeqAndDirSeqAndDeletedFalse(userSeq, request.getDirSeq());
+        directory.rename(request.getDirName());
+        return directory;
+    }
+
+    @Transactional
     public Directory changeDir(Long userSeq, DirDto.moveDirRequest request) {
         //현재 디렉토리를 현재 디렉토리에 이동
         if (Objects.equals(request.getDirSeq(), request.getTargetSeq())) {

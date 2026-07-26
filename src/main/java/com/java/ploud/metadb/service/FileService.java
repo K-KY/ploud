@@ -131,6 +131,13 @@ public class FileService {
     }
 
     @Transactional
+    public Files renameFile(Long userSeq, FileDto.RenameRequest request) {
+        Files file = fileRepository.findByUser_UserSeqAndFileSeq(userSeq, request.getFileSeq());
+        file.rename(request.getTitle());
+        return file;
+    }
+
+    @Transactional
     public List<Files> changeDir(Long userSeq, FileChangeDto.Request dto) {
         Directory dir = directoryService.findDir(userSeq, dto.getTargetDirSeq());
         List<FileDto.Request> moveFiles = dto.getFiles();

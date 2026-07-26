@@ -69,6 +69,13 @@ public class Directory {
         deleted = true;
     }
 
+    public void rename(String dirName) {
+        if (dirName == null || dirName.isBlank()) {
+            throw new IllegalArgumentException("디렉토리 이름은 비어 있을 수 없습니다.");
+        }
+        this.dirName = dirName;
+    }
+
     public void changeDir(Directory target) {
         //root는 parent가 null임
         if (this.getParent() == null) {

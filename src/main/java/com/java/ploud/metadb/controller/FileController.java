@@ -74,6 +74,12 @@ public class FileController {
         fileService.deleteFileSoft(userDetail.getUserSeq(), request.getFileSeq());
     }
 
+    @PatchMapping("name")
+    public FileDto.Response renameFile(@AuthenticationPrincipal AuthedUserDetail userDetail,
+                                       @RequestBody FileDto.RenameRequest request) {
+        return FileDto.Response.from(fileService.renameFile(userDetail.getUserSeq(), request));
+    }
+
     @PatchMapping
     public ResponseEntity<List<FileDto.Response>> changeDirs(@AuthenticationPrincipal AuthedUserDetail userDetail
             , @RequestBody FileChangeDto.Request request) {
