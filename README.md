@@ -42,120 +42,134 @@ presigned URL을 발급받아 클라이언트가 객체 스토리지로 파일�
 
 <img src="ploud/ploud%20delete%20file%20and%20%20dir.gif" alt="Ploud 파일 및 디렉토리 삭제" width="900">
 
+### 파일 및 디렉토리 다운로드
+
 
 ```text
 ploud
+├── compose.yaml
 ├── Dockerfile
 ├── README.md
 ├── build.gradle
+├── docker-run.md
+├── monitor
+│   ├── config.alloy
+│   ├── docker-compose.yml
+│   ├── loki-config.yml
+│   └── prometheus.yml
 ├── settings.gradle
 └── src
-    ├── main
-    │   ├── java
-    │   │   └── com/java/ploud
-    │   │       ├── PloudApplication.java
-    │   │       ├── auth
-    │   │       │   ├── auth.md
-    │   │       │   ├── controller
-    │   │       │   │   ├── SignUpController.java
-    │   │       │   │   └── UserController.java
-    │   │       │   ├── dto
-    │   │       │   │   ├── AuthDto.java
-    │   │       │   │   ├── AuthedUserDetail.java
-    │   │       │   │   └── UserDto.java
-    │   │       │   ├── entity
-    │   │       │   │   └── User.java
-    │   │       │   ├── repository
-    │   │       │   │   └── UserRepository.java
-    │   │       │   └── service
-    │   │       │       ├── PasswordEncryptor.java
-    │   │       │       ├── TempUserService.java
-    │   │       │       ├── UserService.java
-    │   │       │       └── mail
-    │   │       │           └── MailService.java
-    │   │       ├── config
-    │   │       │   ├── AppConfig.java
-    │   │       │   ├── AuthConfig.java
-    │   │       │   ├── MailConfig.java
-    │   │       │   ├── MinioConfig.java
-    │   │       │   ├── RedisConfig.java
-    │   │       │   ├── ScheduleConfig.java
-    │   │       │   ├── SecurityConfig.java
-    │   │       │   └── WebConfig.java
-    │   │       ├── exceptions
-    │   │       │   └── RootNotFoundException.java
-    │   │       ├── jwt
-    │   │       │   ├── JwtProvider.java
-    │   │       │   ├── controller
-    │   │       │   │   └── JwtController.java
-    │   │       │   ├── dto
-    │   │       │   │   └── JwtDto.java
-    │   │       │   ├── filter
-    │   │       │   │   ├── JwtAuthenticationFilter.java
-    │   │       │   │   ├── JwtFilter.java
-    │   │       │   │   └── RequestDebugFilter.java
-    │   │       │   └── service
-    │   │       │       └── JwtService.java
-    │   │       ├── metadb
-    │   │       │   ├── controller
-    │   │       │   │   ├── DirController.java
-    │   │       │   │   ├── FileController.java
-    │   │       │   │   └── SearchController.java
-    │   │       │   └── service
-    │   │       │       ├── DeleteQueueService.java
-    │   │       │       ├── DirectoryService.java
-    │   │       │       ├── DirectoryTransactionService.java
-    │   │       │       ├── FileService.java
-    │   │       │       ├── SearchService.java
-    │   │       │       ├── StorageCleanService.java
-    │   │       │       ├── dto
-    │   │       │       │   ├── DirDto.java
-    │   │       │       │   ├── DirectoryDto.java
-    │   │       │       │   ├── DirectoryPathDto.java
-    │   │       │       │   ├── ExploreDto.java
-    │   │       │       │   ├── FileChangeDto.java
-    │   │       │       │   ├── FileDto.java
-    │   │       │       │   ├── MetaDataDto.java
-    │   │       │       │   ├── PathDecryptDto.java
-    │   │       │       │   ├── QueueMessage.java
-    │   │       │       │   └── SearchDto.java
-    │   │       │       ├── entity
-    │   │       │       │   ├── DeleteQueue.java
-    │   │       │       │   ├── Directory.java
-    │   │       │       │   ├── Files.java
-    │   │       │       │   ├── StorageCleanQueue.java
-    │   │       │       │   └── TargetTypes.java
-    │   │       │       ├── queue
-    │   │       │       │   ├── DelConsumer.java
-    │   │       │       │   ├── DelProducer.java
-    │   │       │       │   ├── DirQueueHandler.java
-    │   │       │       │   ├── FileQueueHandler.java
-    │   │       │       │   ├── QueueHandleManager.java
-    │   │       │       │   ├── QueueHandler.java
-    │   │       │       │   ├── StorageQueueHandler.java
-    │   │       │       │   └── StreamInitializer.java
-    │   │       │       └── repository
-    │   │       │           ├── DeleteQueueRepository.java
-    │   │       │           ├── DirectoryRepository.java
-    │   │       │           ├── FileRepository.java
-    │   │       │           └── StorageCleanRepository.java
-    │   │       └── storage
-    │   │           ├── dev.md
-    │   │           ├── controller
-    │   │           │   └── StorageController.java
-    │   │           └── service
-    │   │               ├── MinioService.java
-    │   │               └── dto
-    │   │                   ├── FileDeleteDto.java
-    │   │                   ├── FileUploadDto.java
-    │   │                   ├── PreSignedUrlDto.java
-    │   │                   └── StorageDto.java
-    │   └── resources
-    │       ├── application-local.properties
-    │       ├── application-prod.properties
-    │       ├── application-test.properties
-    │       └── application.properties
-    └── test
+    └── main
+        ├── java
+        │   └── com/java/ploud
+        │       ├── PloudApplication.java
+        │       ├── auth
+        │       │   ├── auth.md
+        │       │   ├── controller
+        │       │   │   ├── SignUpController.java
+        │       │   │   └── UserController.java
+        │       │   ├── dto
+        │       │   │   ├── AuthDto.java
+        │       │   │   ├── AuthedUserDetail.java
+        │       │   │   └── UserDto.java
+        │       │   ├── entity
+        │       │   │   └── User.java
+        │       │   ├── repository
+        │       │   │   └── UserRepository.java
+        │       │   └── service
+        │       │       ├── PasswordEncryptor.java
+        │       │       ├── TempUserService.java
+        │       │       ├── UserService.java
+        │       │       └── mail
+        │       │           └── MailService.java
+        │       ├── config
+        │       │   ├── AppConfig.java
+        │       │   ├── AuthConfig.java
+        │       │   ├── MailConfig.java
+        │       │   ├── MinioConfig.java
+        │       │   ├── RedisConfig.java
+        │       │   ├── ScheduleConfig.java
+        │       │   ├── SecurityConfig.java
+        │       │   └── WebConfig.java
+        │       ├── exceptions
+        │       │   ├── DirectoryNotFoundException.java
+        │       │   ├── GlobalExceptionHandler.java
+        │       │   ├── RootNotFoundException.java
+        │       │   └── ZipStreamingException.java
+        │       ├── jwt
+        │       │   ├── JwtProvider.java
+        │       │   ├── controller
+        │       │   │   └── JwtController.java
+        │       │   ├── dto
+        │       │   │   └── JwtDto.java
+        │       │   ├── filter
+        │       │   │   ├── JwtAuthenticationFilter.java
+        │       │   │   ├── JwtFilter.java
+        │       │   │   └── RequestDebugFilter.java
+        │       │   └── service
+        │       │       └── JwtService.java
+        │       ├── metadb
+        │       │   ├── controller
+        │       │   │   ├── DirController.java
+        │       │   │   ├── FileController.java
+        │       │   │   ├── SearchController.java
+        │       │   │   └── ZipDownloadController.java
+        │       │   └── service
+        │       │       ├── DeleteQueueService.java
+        │       │       ├── DirectoryQueryService.java
+        │       │       ├── DirectoryService.java
+        │       │       ├── DirectoryTransactionService.java
+        │       │       ├── FileService.java
+        │       │       ├── SearchService.java
+        │       │       ├── StorageCleanService.java
+        │       │       ├── ZipDownloadService.java
+        │       │       ├── dto
+        │       │       │   ├── DirDto.java
+        │       │       │   ├── DirectoryDto.java
+        │       │       │   ├── DirectoryPathDto.java
+        │       │       │   ├── ExploreDto.java
+        │       │       │   ├── FileChangeDto.java
+        │       │       │   ├── FileDto.java
+        │       │       │   ├── MetaDataDto.java
+        │       │       │   ├── PathDecryptDto.java
+        │       │       │   ├── QueueMessage.java
+        │       │       │   └── SearchDto.java
+        │       │       ├── entity
+        │       │       │   ├── DeleteQueue.java
+        │       │       │   ├── Directory.java
+        │       │       │   ├── Files.java
+        │       │       │   ├── StorageCleanQueue.java
+        │       │       │   └── TargetTypes.java
+        │       │       ├── queue
+        │       │       │   ├── DelConsumer.java
+        │       │       │   ├── DelProducer.java
+        │       │       │   ├── DirQueueHandler.java
+        │       │       │   ├── FileQueueHandler.java
+        │       │       │   ├── QueueHandleManager.java
+        │       │       │   ├── QueueHandler.java
+        │       │       │   ├── StorageQueueHandler.java
+        │       │       │   └── StreamInitializer.java
+        │       │       └── repository
+        │       │           ├── DeleteQueueRepository.java
+        │       │           ├── DirectoryRepository.java
+        │       │           ├── FileRepository.java
+        │       │           └── StorageCleanRepository.java
+        │       └── storage
+        │           ├── dev.md
+        │           ├── controller
+        │           │   └── StorageController.java
+        │           └── service
+        │               ├── MinioService.java
+        │               └── dto
+        │                   ├── FileDeleteDto.java
+        │                   ├── FileUploadDto.java
+        │                   ├── PreSignedUrlDto.java
+        │                   └── StorageDto.java
+        └── resources
+            ├── application-local.properties
+            ├── application-prod.properties
+            ├── application-test.properties
+            └── application.properties
 ```
 
 ## 기술 스택
