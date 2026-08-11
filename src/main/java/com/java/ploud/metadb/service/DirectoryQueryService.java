@@ -7,6 +7,8 @@ import com.java.ploud.metadb.service.repository.DirectoryRepository;
 import com.java.ploud.metadb.service.repository.FileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -177,5 +179,9 @@ public class DirectoryQueryService {
     private String sanitizeFallbackFilename(String filename) {
         String sanitized = sanitizePathSegment(filename == null || filename.isBlank() ? "unknown-file" : filename);
         return sanitized.isBlank() ? "unknown-file" : sanitized;
+    }
+
+    public Slice<Files> findChildFiles(Long dirSeq, int page, int pageSize) {
+        return fileRepository.findAllByParent_DirSeqAndDeletedFalseOrderByFileSeqAsc(dirSeq, PageRequest.of(page, pageSize));
     }
 }
