@@ -56,6 +56,7 @@ public class FileController {
                 .body(toFileResponses(fileService.readFiles(userDetail.getUserSeq(), dir)));
     }
 
+    @Deprecated
     @PostMapping
     public ResponseEntity<List<FileDto.Response>> readFiles(@AuthenticationPrincipal AuthedUserDetail userDetail,
                                        @RequestBody FileDto.Request request) {
