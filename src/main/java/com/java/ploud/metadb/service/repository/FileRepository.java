@@ -2,6 +2,7 @@ package com.java.ploud.metadb.service.repository;
 
 import com.java.ploud.metadb.service.entity.Files;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,9 @@ import java.util.List;
 
 public interface FileRepository extends JpaRepository<Files, Long> {
     List<Files> findByParent_DirSeq(Long parent);
+
     List<Files> findByUser_UserSeqAndParent_DirSeq(Long userSeq, Long parent);
+
     List<Files> findByUser_UserSeqAndParent_DirSeqAndDeletedFalse(Long userSeq, Long parent);
 
     void deleteByUser_userSeqAndFileSeq(Long userUserSeq, Long fileSeq);
@@ -44,4 +47,7 @@ public interface FileRepository extends JpaRepository<Files, Long> {
     @EntityGraph(attributePaths = {"parent"})
     List<Files> findAllByParent_DirSeqIn(Collection<Long> dirSeqs);
 
+    @EntityGraph(attributePaths = {"parent"})
+    Slice<Files> findAllByParent_DirSeqAndDeletedFalseOrderByFileSeqAsc(Long dirSeq, Pageable pageable);
 }
+
