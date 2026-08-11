@@ -5,6 +5,7 @@ import com.java.ploud.metadb.service.entity.Files;
 import com.java.ploud.storage.service.MinioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -33,6 +34,59 @@ public class ZipDownloadService {
         this.minioService = minioService;
     }
 
+    public void streamZipFile(Long dirSeq, OutputStream outputStream) throws IOException {
+        Directory rootDirectory = directoryQueryService.getRootDirectory(dirSeq);
+        log.info("ZIP stream requested dirSeq={} dirName={}", rootDirectory.getDirSeq(), rootDirectory.getDirName());
+
+        //dirSeq 하위의 모든 디렉토리 조회
+        List<Directory> directories = directoryQueryService.findAllSubDirectories(dirSeq);
+        log.info("ZIP stream directory scan completed rootDirSeq={} directoryCount={}", dirSeq, directories.size());
+        int pageSize = 500;
+        Set<String> directoryEntries = new HashSet<>();
+        Set<String> fileEntries = new HashSet<>();
+
+        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, BUFFER_SIZE);
+             ZipOutputStream zipOutputStream = new ZipOutputStream(bufferedOutputStream)) {
+            Slice<Files> childFiles;
+            //압축 안함
+            zipOutputStream.setLevel(Deflater.NO_COMPRESSION);
+            for (Directory directory : directories) {
+                //디렉토리마다 조회된 파일 페이지 초기화
+                int page = 0;
+                do {
+                    childFiles = directoryQueryService.findChildFiles(directory.getDirSeq(), page++, pageSize);
+                    log.info(
+                            "ZIP stream file page loaded rootDirSeq={} currentDirSeq={} page={} fileCount={} hasNext={}",
+                            dirSeq,
+                            directory.getDirSeq(),
+                            page - 1,
+                            childFiles.getNumberOfElements(),
+                            childFiles.hasNext()
+                    );
+                    for (Files file : childFiles) {
+                        String fullPath = directoryQueryService
+                                .buildFullPath(file.getParent(), file.getTitle());
+                        String normalizedPath = normalizeEntryPath(fullPath);
+
+                        //넣어보고 안들어가면 중복
+                        if (!fileEntries.add(normalizedPath)) {
+                            log.warn("Duplicate ZIP file entry detected. use storageKey path={}", normalizedPath);
+                            continue;
+                        }
+
+                        writeDirectoryEntries(zipOutputStream, normalizedPath, directoryEntries);
+                        streamFileSafely(zipOutputStream, file, normalizedPath);
+                    }
+                } while (childFiles.hasNext());
+            }
+            zipOutputStream.finish();
+            zipOutputStream.flush();
+            bufferedOutputStream.flush();
+            log.info("ZIP stream finished successfully dirSeq={} directoryCount={} fileEntryCount={}", dirSeq, directories.size(), fileEntries.size());
+        }
+    }
+
+    @Deprecated
     public void streamZip(Long dirSeq, OutputStream outputStream) throws IOException {
         //디렉토리 조회
         Directory rootDirectory = directoryQueryService.getRootDirectory(dirSeq);
@@ -43,7 +97,7 @@ public class ZipDownloadService {
         log.info("After loading subdirectories count={} dirSeq={}", directories.size(), dirSeq);
 
         //dirSeq 하위의 디렉토리의 파일을 포함한 모든 파일 조회
-        List<Files> files = directoryQueryService.findAllFilesByDirectories(directories);
+        List<Files> files = directoryQueryService.findAllFilesByDirectories(directoryQueryService.findAllSubDirectories(dirSeq));
         log.info("After loading files count={} dirSeq={}", files.size(), dirSeq);
 
         Set<String> directoryEntries = new HashSet<>();
@@ -60,6 +114,7 @@ public class ZipDownloadService {
                         .buildFullPath(file.getParent(), file.getTitle());
                 String normalizedPath = normalizeEntryPath(fullPath);
 
+                //넣어보고 안들어가면 중복
                 if (!fileEntries.add(normalizedPath)) {
                     log.warn("Duplicate ZIP file entry detected. use storageKey path={}", normalizedPath);
                     continue;

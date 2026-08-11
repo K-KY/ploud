@@ -28,7 +28,7 @@ public class ZipDownloadController {
         log.info("Start download dirSeq={}", dirSeq);
 
         StreamingResponseBody responseBody =
-                outputStream -> zipDownloadService.streamZip(dirSeq, outputStream);
+                outputStream -> zipDownloadService.streamZipFile(dirSeq, outputStream);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/zip"))
