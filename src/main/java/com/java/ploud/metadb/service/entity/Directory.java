@@ -17,7 +17,6 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Table(name = "directory", uniqueConstraints = {
         @UniqueConstraint(
                 name = "dir_owner_parent_unique",
@@ -102,4 +101,15 @@ public class Directory {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Directory{" +
+                "dirSeq=" + dirSeq +
+                ", dirName='" + dirName + '\'' +
+                ", user=" + user +
+                ", deleted=" + deleted +
+                ", isRoot=" + isRoot +
+                ", created=" + created +
+                '}';
+    }
 }
