@@ -6,6 +6,8 @@ import com.java.ploud.metadb.service.repository.DeleteQueueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,4 +39,9 @@ public class DeleteQueueService {
         log.info("execute delete queue {}", queueId);
         deleteQueueRepository.findById(queueId).ifPresent(DeleteQueue::execute);
     }
-}
+
+    @Transactional(readOnly = true)
+    public Slice<DeleteQueue> readNotExecuted(int page, int size) {
+        log.info("read notExecuted page {}, size {}", page, size);
+        return deleteQueueRepository.findByExecutedFalse(PageRequest.of(page, size));
+    }}
