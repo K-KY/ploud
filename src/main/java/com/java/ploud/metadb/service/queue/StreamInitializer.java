@@ -2,6 +2,7 @@ package com.java.ploud.metadb.service.queue;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,11 @@ public class StreamInitializer {
         try {
             redisTemplate.opsForStream().createGroup("del-stream", "del-group");
 
-        } catch (Exception e) {
+        }
+        catch (RedisSystemException e) {
+
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
