@@ -1,9 +1,10 @@
 package com.java.ploud.metadb.service.queue;
 
+import com.java.ploud.metadb.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.connection.stream.*;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,46 +14,61 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DelConsumer {
-    private final RedisTemplate<String, Object> redisTemplate;
     private final QueueHandleManager queueHandleManager;
+    private final RedisService redisService;
+    private boolean recover = false;
 
     @Scheduled(fixedDelay = 1000)
-    public void consume() {
+    public void consume() throws InterruptedException {
         // 스트림 이름, 필드 key, 필드 value
-        List<MapRecord<String, Object, Object>> messages =
-                redisTemplate.opsForStream().read(
-                        Consumer.from("del-group", "consumer-1"),
-                        StreamReadOptions.empty().count(500),
-                        StreamOffset.create("del-stream", ReadOffset.lastConsumed())
-                );
+        try {
+            if (recover && redisService.isAlive()) {
+                redisService.recoverDelQueueMessages();
+                recover = false;
+            }
+            List<MapRecord<String, Object, Object>> messages
+                    = redisService.readMessages("del-group", "consumer-1", "del-stream");
+            List<MapRecord<String, Object, Object>> pending
+                    = redisService.readPending("del-group", "consumer-1", "del-stream");
+            handleMessage(pending);
+            handleMessage(messages);
 
-        if (messages == null || messages.isEmpty()) {
-            //메세지 없을 때 처리 안된 메세지 있는지 확인
+        } catch (RedisConnectionFailureException e) {
+            //레디스가 중지된 경우 복구
+            recover = true;
+            log.warn("Redis unavailable. Recovery will run after reconnect.");
             return;
         }
 
         log.info("scheduler running");
+    }
+
+    private void handleMessage(List<MapRecord<String, Object, Object>> messages) {
+        if (messages == null || messages.isEmpty()) {
+            return;
+        }
+
         for (MapRecord<String, Object, Object> msg : messages) {
+
             try {
                 log.info("consume msg {}", msg.getValue());
 
                 //메세지 처리
-                process(msg);
+                queueHandleManager.handle(msg);
 
                 //처리 완료된 메세지 확인 (삭제 아님)
-                redisTemplate.opsForStream()
-                        .acknowledge("del-stream", "del-group", msg.getId());
+                redisService.acknowledge(msg.getId());
 
             } catch (Exception e) {
                 //
                 log.error("consume msg error: {} msg : {}", e, msg.getValue());
             }
         }
+
     }
 
 
-    private void process(MapRecord<String, Object, Object> msg)  {
-        queueHandleManager.handle(msg);
+    private void process(MapRecord<String, Object, Object> msg) {
 //        String userSeq = msg.getValue().get("user").toString();
 //        String targetSeq = msg.getValue().get("target").toString();
 //        String type = msg.getValue().get("type").toString();
