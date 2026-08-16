@@ -28,9 +28,6 @@ public class DeleteQueue {
 
     @Enumerated(EnumType.STRING)
     private TargetTypes type;
-
-    private String path;
-
     private boolean executed;
 
     @CreatedDate
