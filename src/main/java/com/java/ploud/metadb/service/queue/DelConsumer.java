@@ -30,6 +30,10 @@ public class DelConsumer {
                     = redisService.readMessages("del-group", "consumer-1", "del-stream");
             List<MapRecord<String, Object, Object>> pending
                     = redisService.readPending("del-group", "consumer-1", "del-stream");
+            if (messages.isEmpty() && pending.isEmpty()) {
+                return;
+            }
+            log.info("scheduler running");
             handleMessage(pending);
             handleMessage(messages);
 
@@ -40,7 +44,6 @@ public class DelConsumer {
             return;
         }
 
-        log.info("scheduler running");
     }
 
     private void handleMessage(List<MapRecord<String, Object, Object>> messages) {
