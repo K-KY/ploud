@@ -35,6 +35,7 @@ public class ZipDownloadService {
     }
 
     public void streamZipFile(Long dirSeq, OutputStream outputStream) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
         Directory rootDirectory = directoryQueryService.getRootDirectory(dirSeq);
         log.info("ZIP stream requested dirSeq={} dirName={}", rootDirectory.getDirSeq(), rootDirectory.getDirName());
 
@@ -75,7 +76,7 @@ public class ZipDownloadService {
                         }
 
                         writeDirectoryEntries(zipOutputStream, normalizedPath, directoryEntries);
-                        streamFileSafely(zipOutputStream, file, normalizedPath);
+                        streamFileSafely(zipOutputStream, file, normalizedPath, buffer);
                     }
                 } while (childFiles.hasNext());
             }
@@ -87,7 +88,7 @@ public class ZipDownloadService {
     }
 
     @Deprecated
-    public void streamZip(Long dirSeq, OutputStream outputStream) throws IOException {
+    public void streamZip(Long dirSeq, OutputStream outputStream, byte[] buffer) throws IOException {
         //디렉토리 조회
         Directory rootDirectory = directoryQueryService.getRootDirectory(dirSeq);
         log.info("After loading directory dirSeq={} dirName={}", rootDirectory.getDirSeq(), rootDirectory.getDirName());
@@ -121,7 +122,7 @@ public class ZipDownloadService {
                 }
 
                 writeDirectoryEntries(zipOutputStream, normalizedPath, directoryEntries);
-                streamFileSafely(zipOutputStream, file, normalizedPath);
+                streamFileSafely(zipOutputStream, file, normalizedPath, buffer);
             }
 
             zipOutputStream.finish();
@@ -131,15 +132,15 @@ public class ZipDownloadService {
         }
     }
 
-    private void streamFileSafely(ZipOutputStream zipOutputStream, Files file, String fullPath) {
+    private void streamFileSafely(ZipOutputStream zipOutputStream, Files file, String fullPath, byte[] buffer) {
         try {
-            streamFile(zipOutputStream, file, fullPath);
+            streamFile(zipOutputStream, file, fullPath, buffer);
         } catch (Exception exception) {
             log.error("Skipping file after streaming failure storageKey={} path={}", file.getStorageKey(), fullPath, exception);
         }
     }
 
-    private void streamFile(ZipOutputStream zipOutputStream, Files file, String fullPath) {
+    private void streamFile(ZipOutputStream zipOutputStream, Files file, String fullPath, byte[] buffer) {
         long fileSize = minioService.getObjectSize(file.getStorageKey());
         log.info("Writing file: {} size={}", fullPath, fileSize);
 
@@ -156,7 +157,6 @@ public class ZipDownloadService {
             zipOutputStream.putNextEntry(new ZipEntry(fullPath));
             entryOpened = true;
 
-            byte[] buffer = new byte[BUFFER_SIZE];
             int len;
             while ((len = inputStream.read(buffer)) != -1) {
                 zipOutputStream.write(buffer, 0, len);
