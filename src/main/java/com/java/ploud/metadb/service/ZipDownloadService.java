@@ -21,7 +21,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipDownloadService {
 
     private static final Logger log = LoggerFactory.getLogger(ZipDownloadService.class);
-    private static final int BUFFER_SIZE = 8 * 1024;
+    private static final int BUFFER_SIZE = 1024 * 1024 * 2;
 
     private final DirectoryQueryService directoryQueryService;
     private final MinioService minioService;
